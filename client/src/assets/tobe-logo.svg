@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <circle cx="100" cy="100" r="95" fill="#008080"/>
+  <text x="100" y="115" font-family="Arial" font-size="36" font-weight="bold" fill="white" text-anchor="middle">TO BE</text>
+</svg>

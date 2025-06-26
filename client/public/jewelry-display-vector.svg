@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="600" height="600" fill="none" stroke="#006491" stroke-width="25" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Neck bust shape top -->
+  <path d="M170,170 C170,170 250,130 300,130 C350,130 430,170 430,170 L430,380 L170,380 L170,170 Z" />
+  
+  <!-- Necklace pendant -->
+  <ellipse cx="300" cy="260" rx="30" ry="40" />
+  
+  <!-- Stand middle part -->
+  <line x1="270" y1="380" x2="270" y2="440" />
+  <line x1="330" y1="380" x2="330" y2="440" />
+  
+  <!-- Stand base -->
+  <rect x="180" y="440" width="240" height="50" />
+</svg>

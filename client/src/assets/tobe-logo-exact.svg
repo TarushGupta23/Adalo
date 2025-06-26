@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <circle cx="100" cy="100" r="95" fill="#006460"/>
+  <text x="100" y="110" font-family="Arial" font-size="50" font-weight="bold" fill="white" text-anchor="middle">TOBE</text>
+  <text x="100" y="135" font-family="Arial" font-size="12" fill="white" text-anchor="middle">PACKAGING</text>
+  <text x="100" y="150" font-family="Arial" font-size="12" fill="white" text-anchor="middle">MILANO</text>
+  <text x="100" y="165" font-family="Arial" font-size="10" fill="white" text-anchor="middle">1989</text>
+  <line x1="70" y1="145" x2="130" y2="145" stroke="white" stroke-width="1"/>
+</svg>

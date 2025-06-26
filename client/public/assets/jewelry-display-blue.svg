@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <g fill="#006491">
+    <!-- Main neck shape -->
+    <path d="M229.5 140c-27.5 0-83.5 13-83.5 13v189h217v-189s-56-13-83.5-13h-50z"/>
+    <!-- Pendant -->
+    <ellipse cx="256" cy="230" rx="27" ry="35"/>
+    <!-- Stand base -->
+    <rect x="243" y="342" width="26" height="39"/>
+    <rect x="178" y="381" width="156" height="40"/>
+  </g>
+</svg>

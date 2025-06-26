@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80">
+  <g fill="#FFFFFF">
+    <path d="M15,10 H45 V15 H33 V60 H27 V15 H15 V10 Z"/>
+    <path d="M70,35 C70,23 60,10 50,10 C40,10 30,23 30,35 C30,47 40,60 50,60 C60,60 70,47 70,35 Z M64,35 C64,44 58,54 50,54 C42,54 36,44 36,35 C36,26 42,16 50,16 C58,16 64,26 64,35 Z"/>
+    <path d="M85,10 H105 C125,10 125,18 125,26 C125,34 125,42 105,42 H100 V60 H85 V10 Z M100,16 V36 H105 C115,36 115,31 115,26 C115,21 115,16 105,16 H100 Z"/>
+    <path d="M130,10 H175 V15 H155 V30 H170 V36 H155 V55 H175 V60 H130 V10 Z"/>
+    <text x="100" y="70" font-family="Arial" font-size="8" text-anchor="middle">MILANO</text>
+    <text x="100" y="78" font-family="Arial" font-size="6" text-anchor="middle">1989</text>
+  </g>
+</svg>

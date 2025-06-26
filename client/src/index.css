@@ -1,0 +1,172 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Custom styles for the profile page */
+.profile-page-container {
+  position: relative;
+}
+
+/* Hide the Rubik's cube image on To Be Packing profile */
+.profile-page-container img[src$="rubiks-cube.png"],
+.profile-page-container img[src*="rubik"],
+.profile-page-container img[src*="cube"],
+.profile-page-container img[src*="puzzle"] {
+  display: none !important;
+}
+
+/* Target specific positioning for the Rubik's cube */
+.profile-page-container .relative > img,
+.profile-page-container div[style*="right:"] > img {
+  display: none !important;
+}
+
+:root {
+  /* Background colors */
+  --background: 0 0% 100%;
+  --foreground: 20 14.3% 4.1%;
+  --muted: 60 4.8% 95.9%;
+  --muted-foreground: 25 5.3% 44.7%;
+  
+  /* Card colors */
+  --card: 0 0% 100%;
+  --card-foreground: 20 14.3% 4.1%;
+  
+  /* Popover colors */
+  --popover: 0 0% 100%;
+  --popover-foreground: 20 14.3% 4.1%;
+  
+  /* Primary colors - Green from design */
+  --primary: 172 54% 17%;
+  --primary-foreground: 211 100% 99%;
+  
+  /* Secondary colors - Gold from design - #c6b05e */
+  --secondary: 49 40% 57%;
+  --secondary-foreground: 24 9.8% 10%;
+  
+  /* Accent colors - Rose pink from design */
+  --accent: 347 29% 57%;
+  --accent-foreground: 0 0% 100%;
+  
+  /* Utilities */
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 60 9.1% 97.8%;
+  --border: 20 5.9% 90%;
+  --input: 20 5.9% 90%;
+  --ring: 172 54% 17%;
+  
+  /* Chart colors (from teal to green spectrum) */
+  --chart-1: 172 54% 17%;
+  --chart-2: 46 57% 52%;
+  --chart-3: 347 29% 57%;
+  --chart-4: 196 26% 56%;
+  --chart-5: 172 44% 27%;
+  
+  /* Sidebar colors */
+  --sidebar-background: 240 10% 3.9%;
+  --sidebar-foreground: 0 0% 98%;
+  --sidebar-primary: 207 90% 54%;
+  --sidebar-primary-foreground: 211 100% 99%;
+  --sidebar-accent: 240 3.7% 15.9%;
+  --sidebar-accent-foreground: 0 0% 98%;
+  --sidebar-border: 240 3.7% 15.9%;
+  --sidebar-ring: 240 4.9% 83.9%;
+  
+  /* Border radius */
+  --radius: 0.5rem;
+}
+
+.dark {
+  --background: 240 10% 3.9%;
+  --foreground: 0 0% 98%;
+  --muted: 240 3.7% 15.9%;
+  --muted-foreground: 240 5% 64.9%;
+  --popover: 240 10% 3.9%;
+  --popover-foreground: 0 0% 98%;
+  --card: 240 10% 3.9%;
+  --card-foreground: 0 0% 98%;
+  --border: 240 3.7% 15.9%;
+  --input: 240 3.7% 15.9%;
+  --primary: 172 54% 20%;
+  --primary-foreground: 211 100% 99%;
+  --secondary: 46 57% 45%;
+  --secondary-foreground: 0 0% 98%;
+  --accent: 347 29% 48%;
+  --accent-foreground: 0 0% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 0 0% 98%;
+  --ring: 172 54% 17%;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply antialiased bg-neutral-200 text-neutral-900 font-sans;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif;
+  }
+}
+
+/* Remove Rubik's cube decoration */
+.profile-page-container div[class*="avatar"] + img,
+.profile-page-container div[class*="avatar"] ~ img,
+.profile-page-container .rubiks-cube-img,
+/* Specifically target the Rubik's cube image in the profile header */
+.profile-page-container:not(.exclude-rule) img[src*="cube"],
+.profile-page-container:not(.exclude-rule) img[src*="rubik"],
+.profile-page-container:not(.exclude-rule) .h-64 + div img:not([src*="profile"]),
+/* Extra selectors to ensure we catch it */
+.profile-page-container [id*="rubik"],
+.profile-page-container [class*="rubik"],
+.profile-page-container [id*="cube"],
+.profile-page-container [class*="cube"],
+/* Completely block any decorative elements not on the profile */
+.profile-page-container .bg-white > .container > .relative > *:not(.h-48, .h-64, .flex),
+/* Block absolute positioned elements */
+.profile-page-container .relative > *:not(.h-48, .h-64, .flex, div[class*="mt-16"]) {
+  display: none !important;
+}
+
+@layer utilities {
+  .font-serif {
+    font-family: 'Cormorant Garamond', serif;
+  }
+  
+  .font-sans {
+    font-family: 'Mulish', sans-serif;
+  }
+  
+  .font-accent {
+    font-family: 'Playfair Display', serif;
+  }
+  
+  /* Anti-trembling fix for articles section */
+  .no-trembling {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+    will-change: auto !important;
+    -webkit-transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+    isolation: isolate;
+    contain: layout style paint;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+}

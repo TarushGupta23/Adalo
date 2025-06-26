@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 600" width="500" height="600">
+  <g fill="none" stroke="#006491" stroke-width="30" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Top neckline with shoulders -->
+    <path d="M130,140 Q130,140 165,120 Q210,100 250,100 Q290,100 335,120 Q370,140 370,140 L370,350 Q370,350 350,370 L150,370 Q130,350 130,350 Z" />
+    
+    <!-- Pendant oval -->
+    <ellipse cx="250" cy="230" rx="25" ry="35" />
+    
+    <!-- Stand legs -->
+    <line x1="235" y1="370" x2="235" y2="450" />
+    <line x1="265" y1="370" x2="265" y2="450" />
+    
+    <!-- Base stand -->
+    <rect x="150" y="450" width="200" height="50" />
+  </g>
+</svg>

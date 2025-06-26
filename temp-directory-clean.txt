@@ -1,0 +1,448 @@
+// This is a very stripped down version of the directory page that we'll use as a template to fix the broken one
+import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { Link, useLocation } from "wouter";
+import { Helmet } from "react-helmet";
+import { User as SchemaUser } from "@shared/schema";
+import { useAuth } from "@/hooks/use-auth";
+
+// Extended User type to handle both camelCase and snake_case fields from API
+interface User extends SchemaUser {
+  // Add snake_case alternatives
+  user_type?: string;
+  secondary_type?: string;
+  full_name?: string;
+  profile_image?: string;
+  cover_image?: string;
+  logo_image?: string;
+  created_at?: Date;
+  is_premium?: boolean;
+}
+
+import Navbar from "@/components/layout/navbar";
+import Footer from "@/components/layout/footer";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { apiRequest } from "@/lib/queryClient";
+import { SimpleTooltip } from "@/components/ui/tooltip";
+
+export default function DirectoryPage() {
+  const { user } = useAuth();
+  const [, navigate] = useLocation();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [profession, setProfession] = useState("");
+  const [location, setLocation] = useState("");
+  
+  // Handle URL parameters for filters
+  const parseAndApplyUrlParams = () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    // Check for both 'profession' and 'category' parameters
+    const professionParam = urlParams.get('profession');
+    const categoryParam = urlParams.get('category');
+    const locationParam = urlParams.get('location');
+    const queryParam = urlParams.get('query');
+    
+    if (professionParam) {
+      console.log("Setting profession from URL param:", professionParam);
+      setProfession(professionParam);
+    } else if (categoryParam) {
+      // Fallback to category if profession is not set
+      setProfession(categoryParam);
+    }
+    
+    if (locationParam) {
+      setLocation(locationParam);
+    }
+    
+    if (queryParam) {
+      setSearchQuery(queryParam);
+    }
+  };
+  
+  useEffect(() => {
+    parseAndApplyUrlParams();
+  }, []);
+  
+  // Fetch users data
+  const { data: professionals, isLoading } = useQuery<User[]>({
+    queryKey: ["/api/users"],
+    select: (data) => {
+      // Log all users and their types for debugging
+      console.log("All users with their types:");
+      data.forEach(user => {
+        console.log(`${user.fullName || user.full_name}: primary=${user.userType || user.user_type}, secondary=${user.secondaryType || user.secondary_type}`);
+      });
+      
+      // Apply filters
+      let filtered = [...data];
+      
+      // Filter by profession/category
+      if (profession) {
+        console.log("Filtering by profession:", profession);
+        filtered = filtered.filter(p => {
+          // Get userType from either camelCase or snake_case property
+          const primaryType = (p.userType || p.user_type || '').toLowerCase();
+          const secondaryType = (p.secondaryType || p.secondary_type || '').toLowerCase();
+          const matchesProfession = primaryType === profession.toLowerCase() || secondaryType === profession.toLowerCase();
+          
+          console.log(`User ${p.id} (${p.fullName || p.full_name}): primary=${primaryType}, secondary=${secondaryType}, matches=${matchesProfession}`);
+          
+          return matchesProfession;
+        });
+      }
+      
+      // Filter by search query
+      if (searchQuery) {
+        const query = searchQuery.toLowerCase();
+        filtered = filtered.filter(p => {
+          // Search in name, company, userType, location
+          return (
+            (p.fullName || p.full_name || '').toLowerCase().includes(query) ||
+            (p.company || '').toLowerCase().includes(query) ||
+            (p.userType || p.user_type || '').toLowerCase().includes(query) ||
+            (p.location || '').toLowerCase().includes(query)
+          );
+        });
+      }
+      
+      // Filter by location
+      if (location) {
+        filtered = filtered.filter(p => {
+          return (p.location || '').toLowerCase().includes(location.toLowerCase());
+        });
+      }
+      
+      return filtered;
+    }
+  });
+  
+  // Send a connection request
+  const sendConnectionRequest = async (professionalId: number) => {
+    try {
+      await apiRequest("POST", "/api/connections", { 
+        recipientId: professionalId,
+        status: "pending" 
+      });
+      
+      // Show success notification
+      // toast.success("Connection request sent!");
+    } catch (error) {
+      console.error("Error sending connection request:", error);
+      // toast.error("Failed to send connection request");
+    }
+  };
+  
+  return (
+    <>
+      <Helmet>
+        <title>Industry Directory | JewelConnect</title>
+        <meta name="description" content="Discover jewelry industry professionals - designers, gemstone dealers, photographers, store designers and more." />
+      </Helmet>
+    
+      <Navbar />
+      
+      <main className="py-8 px-4 sm:px-6 lg:px-8 bg-gray-50 min-h-screen">
+        <div className="max-w-7xl mx-auto">
+          <div className="mb-6">
+            <h1 className="text-3xl font-serif font-bold text-neutral-800 mb-2">Industry Directory</h1>
+            <p className="text-neutral-600 max-w-3xl">Connect with industry professionals to enhance your jewelry business.</p>
+          </div>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
+            <div className="lg:col-span-1">
+              <div className="bg-white p-6 rounded-lg shadow-sm border border-neutral-100">
+                <h2 className="text-lg font-semibold mb-4">Filters</h2>
+                
+                <div className="space-y-4">
+                  <div>
+                    <label htmlFor="search" className="block text-sm font-medium text-neutral-700 mb-1">Search</label>
+                    <Input
+                      id="search"
+                      type="text"
+                      placeholder="Search for professionals"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label htmlFor="profession" className="block text-sm font-medium text-neutral-700 mb-1">Profession</label>
+                    <Select value={profession} onValueChange={setProfession}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="All Professions" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="">All Professions</SelectItem>
+                        <SelectItem value="designer">Designers</SelectItem>
+                        <SelectItem value="gemstone_dealer">Gemstone Dealers</SelectItem>
+                        <SelectItem value="casting">Casting & 3D Printing</SelectItem>
+                        <SelectItem value="bench_jeweler">Bench Jewelers & Setters</SelectItem>
+                        <SelectItem value="packaging">Packaging</SelectItem>
+                        <SelectItem value="displays">Displays</SelectItem>
+                        <SelectItem value="photographer">Photographers</SelectItem>
+                        <SelectItem value="store_design">Store Design & Furniture</SelectItem>
+                        <SelectItem value="marketing">Marketing & Media</SelectItem>
+                        <SelectItem value="wholesale">Wholesale</SelectItem>
+                        <SelectItem value="retail">Retail</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div>
+                    <label htmlFor="location" className="block text-sm font-medium text-neutral-700 mb-1">Location</label>
+                    <Input
+                      id="location"
+                      type="text"
+                      placeholder="Filter by location"
+                      value={location}
+                      onChange={(e) => setLocation(e.target.value)}
+                      className="w-full"
+                    />
+                  </div>
+                  
+                  <Button 
+                    variant="outline" 
+                    onClick={() => {
+                      setSearchQuery("");
+                      setProfession("");
+                      setLocation("");
+                    }}
+                    className="w-full"
+                  >
+                    Clear Filters
+                  </Button>
+                </div>
+              </div>
+            </div>
+            
+            <div className="lg:col-span-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-6">
+                {isLoading ? (
+                  Array.from({ length: 4 }).map((_, i) => (
+                    <Card key={i}>
+                      <CardContent className="p-0">
+                        <Skeleton className="h-36 w-full" />
+                        <div className="p-6">
+                          <div className="flex items-center mb-4">
+                            <Skeleton className="h-12 w-12 rounded-full mr-4" />
+                            <div>
+                              <Skeleton className="h-6 w-40 mb-2" />
+                              <Skeleton className="h-4 w-24" />
+                            </div>
+                          </div>
+                          <Skeleton className="h-4 w-full mb-2" />
+                          <Skeleton className="h-4 w-3/4 mb-4" />
+                          <div className="flex justify-between">
+                            <Skeleton className="h-10 w-32" />
+                            <Skeleton className="h-10 w-10" />
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))
+                ) : professionals?.length ? (
+                  professionals.map((professional) => (
+                    <Card key={professional.id}>
+                      <CardContent className="p-0">
+                        {professional.coverImage || professional.cover_image ? (
+                          <div className="relative">
+                            <img 
+                              src={professional.coverImage || professional.cover_image} 
+                              alt="Professional cover" 
+                              className="w-full h-36 object-cover"
+                            />
+                          </div>
+                        ) : (
+                          // Default gradient for professionals without cover images
+                          <div className="h-36 bg-gradient-to-r from-primary/20 to-secondary/20"></div>
+                        )}
+                      
+                        <div className="p-6">
+                          {/* Standard professional display */}
+                          <div className="flex items-center mb-4">
+                            <Avatar className="h-14 w-14 mr-4 border-2 border-neutral-200">
+                              {(professional.profileImage || professional.profile_image) && (
+                                <AvatarImage 
+                                  src={professional.profileImage || professional.profile_image || ''} 
+                                  alt={professional.fullName || professional.full_name || 'Professional'} 
+                                />
+                              )}
+                              <AvatarFallback className="bg-primary/10 text-primary">
+                                {(professional.fullName || professional.full_name) ? (professional.fullName || professional.full_name).split(' ').map(n => n[0]).join('').toUpperCase() : 'JD'}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <h3 className="font-serif text-xl font-bold text-neutral-800">
+                                {professional.fullName || professional.full_name || 'Professional'}
+                                {(professional.isPremium || professional.is_premium) && (
+                                  <Badge className="ml-2 bg-secondary text-neutral-900">Premium</Badge>
+                                )}
+                              </h3>
+                              <p className="text-neutral-600 capitalize">
+                                {(professional.userType || professional.user_type) ? (professional.userType || professional.user_type).replace(/_/g, ' ') : 'Professional'}
+                                {(professional.secondaryType || professional.secondary_type) && (
+                                  <span> & {(professional.secondaryType || professional.secondary_type).replace(/_/g, ' ')}</span>
+                                )}
+                              </p>
+                            </div>
+                          </div>
+                          
+                          {professional.location && (
+                            <div className="flex items-start mb-2">
+                              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-accent mr-2 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+                              </svg>
+                              <div>
+                                {professional.location.split('|').map((location, index) => {
+                                  let displayLocation = location.trim();
+                                  let mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(displayLocation)}`;
+                                  
+                                  // Extract the location part (after the designation)
+                                  let locationParts = displayLocation.split(' ');
+                                  let designation = '';
+                                  let locationString = displayLocation;
+                                  
+                                  // Handle 'Showroom' or 'Headquarters' designation
+                                  if (locationParts[0] === 'Showroom' || locationParts[0] === 'Headquarters') {
+                                    designation = locationParts[0] + ' ';
+                                    locationString = locationParts.slice(1).join(' ');
+                                  }
+                                  
+                                  return (
+                                    <div key={index} className="mb-1 last:mb-0">
+                                      <span className="text-neutral-600 text-sm">
+                                        {designation}
+                                        <a 
+                                          href={mapsUrl}
+                                          target="_blank"
+                                          rel="noreferrer"
+                                          className="text-neutral-600 text-sm hover:text-primary underline"
+                                        >
+                                          {locationString}
+                                        </a>
+                                      </span>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          )}
+                          
+                          {professional.company && (
+                            <div className="flex items-center mb-2">
+                              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-accent mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                <path fillRule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 01-1 1h-2a1 1 0 01-1-1v-2a1 1 0 00-1-1H7a1 1 0 00-1 1v2a1 1 0 01-1 1H3a1 1 0 01-1-1V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clipRule="evenodd" />
+                              </svg>
+                              <span className="text-neutral-600 text-sm">{professional.company}</span>
+                            </div>
+                          )}
+                          
+                          {professional.email && (
+                            <div className="flex items-center mb-2">
+                              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-accent mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                              </svg>
+                              <a 
+                                href={`mailto:${professional.email}`}
+                                className="text-neutral-600 text-sm hover:text-primary hover:underline"
+                              >
+                                {professional.email}
+                              </a>
+                            </div>
+                          )}
+                          
+                          {professional.bio && (
+                            <p className="text-neutral-700 mb-5 line-clamp-2">{professional.bio}</p>
+                          )}
+                          
+                          <div className="flex flex-wrap gap-2 mb-5">
+                            {(professional.userType || professional.user_type) && (
+                              <Badge variant="outline" className="bg-primary/10 text-primary border-0">
+                                {(professional.userType || professional.user_type).replace(/_/g, ' ')}
+                              </Badge>
+                            )}
+                            {(professional.secondaryType || professional.secondary_type) && (
+                              <Badge variant="outline" className="bg-secondary/10 text-secondary border-0">
+                                {(professional.secondaryType || professional.secondary_type).replace(/_/g, ' ')}
+                              </Badge>
+                            )}
+                          </div>
+                          
+                          <div className="flex justify-between">
+                            <SimpleTooltip content="View profile" side="top">
+                              <Button asChild className="flex-1 mr-2">
+                                <Link to={`/profile/${professional.id}`}>
+                                  View Profile
+                                </Link>
+                              </Button>
+                            </SimpleTooltip>
+                            
+                            {/* Show connect button only for logged in users who are not viewing their own profile */}
+                            {user && professional.id !== user?.id && (
+                              <SimpleTooltip content="Connect" side="top">
+                                <Button
+                                  variant="outline"
+                                  onClick={() => sendConnectionRequest(professional.id)}
+                                  className="flex-none"
+                                  aria-label="Connect"
+                                >
+                                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z" />
+                                  </svg>
+                                </Button>
+                              </SimpleTooltip>
+                            )}
+
+                            {/* Show login prompt for guests */}
+                            {!user && (
+                              <SimpleTooltip content="Sign in to connect" side="top">
+                                <Button
+                                  variant="outline"
+                                  onClick={() => navigate("/auth")}
+                                  className="flex-none"
+                                  aria-label="Sign in"
+                                >
+                                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fillRule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 001 1h10a1 1 0 001-1V7.414l-4-4H3zM2 4a2 2 0 012-2h5.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V16a2 2 0 01-2 2H4a2 2 0 01-2-2V4z" clipRule="evenodd" />
+                                    <path d="M10 12H8v-2a1 1 0 10-2 0v2H4a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2z" />
+                                  </svg>
+                                </Button>
+                              </SimpleTooltip>
+                            )}
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))
+                ) : (
+                  <div className="col-span-full py-16 text-center">
+                    <h3 className="text-xl font-medium text-neutral-800 mb-2">No professionals found</h3>
+                    <p className="text-neutral-600 mb-4">Try adjusting your search or filters</p>
+                    <Button onClick={() => {
+                      setSearchQuery("");
+                      setProfession("");
+                      setLocation("");
+                    }}>
+                      Clear Filters
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+      
+      <Footer />
+    </>
+  );
+}
