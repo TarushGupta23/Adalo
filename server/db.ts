@@ -5,6 +5,8 @@ import * as schema from "@shared/schema";
 
 neonConfig.webSocketConstructor = ws;
 
+console.log('db.ts: DATABASE_URL (inside db.ts)=', process.env.DATABASE_URL); // Check here
+
 if (!process.env.DATABASE_URL) {
   throw new Error(
     "DATABASE_URL must be set. Did you forget to provision a database?",

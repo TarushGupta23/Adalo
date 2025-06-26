@@ -192,7 +192,7 @@ export default function TrendingSection() {
                       <div className="grid grid-cols-1 gap-2 mb-5 mt-4">
                         <div className="overflow-hidden rounded-md shadow-sm h-48 relative">
                           <img 
-                            src="/jewelry-box.jpg" 
+                            src="/assets/jewelry-box-icon.jpg" 
                             alt="To Be Packing jewelry boxes" 
                             className="h-full w-full object-cover"
                           />
