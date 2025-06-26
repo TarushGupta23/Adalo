@@ -63,6 +63,8 @@ const registerSchema = z.object({
   instagram: z.string().optional(),
   facebook: z.string().optional(),
   pinterest: z.string().optional(),
+  // NEW: Resume field
+  resume: z.string().optional(), // Will store base64 or a file URL after upload
 });
 
 export default function AuthPage() {
@@ -75,6 +77,9 @@ export default function AuthPage() {
   const [logoPreview, setLogoPreview] = useState<string>("");
   const [coverPreview, setCoverPreview] = useState<string>("");
   const [productPhotos, setProductPhotos] = useState<string[]>([]);
+  // NEW: State for resume file and preview
+  const [resumeFile, setResumeFile] = useState<File | null>(null);
+  const [resumePreview, setResumePreview] = useState<string>(""); // To show file name or a 'File attached' message
   const [location, navigate] = useLocation();
   const { user, loginMutation, registerMutation } = useAuth();
 
@@ -114,6 +119,7 @@ export default function AuthPage() {
       instagram: "",
       facebook: "",
       pinterest: "",
+      resume: "", // Initialize the new resume field
     },
   });
 
@@ -125,7 +131,8 @@ export default function AuthPage() {
     // Include product photos with the registration data
     const registrationData = {
       ...values,
-      productPhotos: productPhotos
+      productPhotos: productPhotos,
+      resume: resumeFile, // Send the File object. You might need to handle file uploads separately on the backend.
     };
     registerMutation.mutate(registrationData);
   }
@@ -736,7 +743,66 @@ export default function AuthPage() {
                               </div>
                             )}
                           </div>
+
+
+                          {/* NEW: Resume Upload Field */}
+                          <div className="space-y-3">
+                            <h4 className="font-medium">Upload Resume (Optional)</h4>
+                            <p className="text-sm text-neutral-500">Upload your resume in PDF, DOC, or DOCX format.</p>
+                            <FormField
+                              control={registerForm.control}
+                              name="resume"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormControl>
+                                    <Input
+                                      type="file"
+                                      accept=".pdf,.doc,.docx" // Specify accepted file types
+                                      onChange={(e) => {
+                                        const file = e.target.files?.[0];
+                                        if (file) {
+                                          setResumeFile(file); // Store the actual File object
+                                          setResumePreview(file.name); // Display the file name
+                                          field.onChange(file.name); // Update react-hook-form with the file name (or handle base64 if needed for immediate display/validation)
+                                        } else {
+                                          setResumeFile(null);
+                                          setResumePreview("");
+                                          field.onChange("");
+                                        }
+                                      }}
+                                      className="cursor-pointer"
+                                    />
+                                  </FormControl>
+                                  {resumePreview && (
+                                    <div className="mt-2 flex items-center justify-between p-2 border rounded-md bg-white">
+                                      <span className="text-sm text-neutral-700">{resumePreview}</span>
+                                      <Button
+                                        type="button"
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => {
+                                          setResumeFile(null);
+                                          setResumePreview("");
+                                          field.onChange("");
+                                          // Clear the input file element's value to allow re-uploading the same file
+                                          const inputElement = document.getElementById(field.name) as HTMLInputElement;
+                                          if (inputElement) {
+                                            inputElement.value = '';
+                                          }
+                                        }}
+                                      >
+                                        Remove
+                                      </Button>
+                                    </div>
+                                  )}
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </div>
                         </div>
+
+                        
                         
                         <Button 
                           type="submit" 
