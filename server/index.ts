@@ -1,3 +1,9 @@
+import dotenv from 'dotenv'; // This line
+dotenv.config(); 
+console.log('index.ts: NODE_ENV=', process.env.NODE_ENV);
+console.log('index.ts: DATABASE_URL=', process.env.DATABASE_URL); // Check if it's visible here
+
+import { db, pool } from './db';  
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";

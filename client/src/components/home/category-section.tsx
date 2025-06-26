@@ -35,7 +35,7 @@ const categories = [
   {
     icon: (
       <div className="text-primary">
-        <svg 
+        {/* <svg 
           width="38" 
           height="38" 
           viewBox="0 0 24 24" 
@@ -50,7 +50,14 @@ const categories = [
           <circle cx="12" cy="12" r="2" strokeWidth="0" fill="none" />
           <path d="M8 5.5C9.5 3.5 14.5 3.5 16 5.5C17.5 7.5 15.5 11 12 11C8.5 11 6.5 7.5 8 5.5Z" />
           <path d="M8 18.5C9.5 20.5 14.5 20.5 16 18.5C17.5 16.5 15.5 13 12 13C8.5 13 6.5 16.5 8 18.5Z" />
-        </svg>
+        </svg> */}
+        <img 
+          src="/images/bench-jewelers-icon.jpg" 
+          alt="bench jewelers" 
+          width="40" 
+          height="40" 
+          className="object-contain"
+        />
       </div>
     ),
     name: "Bench Jewelers & Setters",
@@ -61,11 +68,18 @@ const categories = [
   },
   {
     icon: <div className="flex items-center justify-center">
-        <img 
+        {/* <img 
           src="/packaging-icon.svg" 
           alt="Packaging" 
           width="34" 
           height="34" 
+          className="object-contain"
+        /> */}
+        <img 
+          src="/images/packaging-icon.jpg" 
+          alt="Packaging" 
+          width="44" 
+          height="44" 
           className="object-contain"
         />
       </div>,
