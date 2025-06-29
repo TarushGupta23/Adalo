@@ -432,7 +432,7 @@ function GroupPurchasePage() {
   }
 
   return (
-    <div className="container mx-auto py-8">
+   <div className="container mx-auto py-6 px-4 sm:px-6 lg:px-8"> {/* Added responsive horizontal padding */}
       <div className="mb-6">
         <Link to="/" className="inline-flex items-center focus:outline-none group">
           <div className="relative mb-0 w-20 h-20">

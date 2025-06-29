@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
-import { 
+import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -57,7 +57,7 @@ export default function InventoryPage() {
   const [openCreateDialog, setOpenCreateDialog] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  
+
   // Fetch user's inventory items
   const { data: inventoryItems, isLoading } = useQuery<InventoryItem[]>({
     queryKey: [`/api/users/${user?.id}/inventory`],
@@ -68,7 +68,7 @@ export default function InventoryPage() {
       return await response.json();
     }
   });
-  
+
   // Fetch featured inventory items (all users)
   const { data: featuredItems, isLoading: isFeaturedLoading } = useQuery<InventoryItem[]>({
     queryKey: ["/api/inventory?featured=true"],
@@ -78,7 +78,7 @@ export default function InventoryPage() {
       return await response.json();
     }
   });
-  
+
   // Create form
   const form = useForm<z.infer<typeof inventoryItemSchema>>({
     resolver: zodResolver(inventoryItemSchema),
@@ -90,7 +90,7 @@ export default function InventoryPage() {
       isFeatured: false,
     },
   });
-  
+
   // Create inventory item mutation
   const createItemMutation = useMutation({
     mutationFn: async (values: z.infer<typeof inventoryItemSchema>) => {
@@ -118,7 +118,7 @@ export default function InventoryPage() {
       });
     },
   });
-  
+
   // Delete inventory item mutation
   const deleteItemMutation = useMutation({
     mutationFn: async (itemId: number) => {
@@ -140,18 +140,18 @@ export default function InventoryPage() {
       });
     },
   });
-  
+
   // Handle form submission
   function onSubmit(values: z.infer<typeof inventoryItemSchema>) {
     createItemMutation.mutate(values);
   }
-  
+
   // Filter items based on search query
-  const filteredItems = inventoryItems?.filter(item => 
+  const filteredItems = inventoryItems?.filter(item =>
     item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     item.description.toLowerCase().includes(searchQuery.toLowerCase())
   ) || [];
-  
+
   // Handle delete confirmation
   const handleDeleteItem = (itemId: number) => {
     if (confirm("Are you sure you want to delete this item?")) {
@@ -165,9 +165,9 @@ export default function InventoryPage() {
         <title>Inventory - JewelConnect</title>
         <meta name="description" content="Manage and showcase your jewelry inventory. Add, edit, and organize your work to share with other professionals." />
       </Helmet>
-      
+
       <Navbar />
-      
+
       <main className="pt-20 pb-12 min-h-screen bg-neutral-50">
         <div className="container mx-auto px-4">
           {/* Back button */}
@@ -179,13 +179,13 @@ export default function InventoryPage() {
               Back
             </Link>
           </div>
-          
+
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
             <div>
               <h1 className="font-serif text-3xl md:text-4xl font-bold text-neutral-800 mb-2">My Inventory</h1>
               <p className="text-neutral-600">Showcase your work to the jewelry community</p>
             </div>
-            
+
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="relative">
                 <Input
@@ -197,7 +197,7 @@ export default function InventoryPage() {
                 />
                 <Search className="absolute left-3 top-2.5 h-4 w-4 text-neutral-500" />
               </div>
-              
+
               <Dialog open={openCreateDialog} onOpenChange={setOpenCreateDialog}>
                 <DialogTrigger asChild>
                   <Button className="whitespace-nowrap">
@@ -211,7 +211,7 @@ export default function InventoryPage() {
                       Showcase your jewelry pieces to potential clients and collaborators.
                     </DialogDescription>
                   </DialogHeader>
-                  
+
                   <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                       <FormField
@@ -227,7 +227,7 @@ export default function InventoryPage() {
                           </FormItem>
                         )}
                       />
-                      
+
                       <FormField
                         control={form.control}
                         name="description"
@@ -235,7 +235,7 @@ export default function InventoryPage() {
                           <FormItem>
                             <FormLabel>Description</FormLabel>
                             <FormControl>
-                              <Textarea 
+                              <Textarea
                                 placeholder="Describe your work, materials used, techniques, etc."
                                 className="resize-none"
                                 rows={4}
@@ -246,7 +246,7 @@ export default function InventoryPage() {
                           </FormItem>
                         )}
                       />
-                      
+
                       <FormField
                         control={form.control}
                         name="imageUrl"
@@ -263,7 +263,7 @@ export default function InventoryPage() {
                           </FormItem>
                         )}
                       />
-                      
+
                       <div className="grid grid-cols-2 gap-4">
                         <FormField
                           control={form.control}
@@ -285,7 +285,7 @@ export default function InventoryPage() {
                             </FormItem>
                           )}
                         />
-                        
+
                         <FormField
                           control={form.control}
                           name="isFeatured"
@@ -307,16 +307,16 @@ export default function InventoryPage() {
                           )}
                         />
                       </div>
-                      
+
                       <DialogFooter>
-                        <Button 
-                          type="button" 
-                          variant="outline" 
+                        <Button
+                          type="button"
+                          variant="outline"
                           onClick={() => setOpenCreateDialog(false)}
                         >
                           Cancel
                         </Button>
-                        <Button 
+                        <Button
                           type="submit"
                           disabled={createItemMutation.isPending}
                         >
@@ -329,41 +329,52 @@ export default function InventoryPage() {
               </Dialog>
             </div>
           </div>
-          
+
           <Tabs defaultValue="myItems" className="space-y-6">
-            <div className="flex justify-between items-center">
-              <TabsList>
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              {/*
+    TabsList:
+    - grid w-full sm:w-auto grid-cols-2: Makes the TabsList span full width on small screens
+      and take auto width (content-based) on 'sm' and up.
+      The grid-cols-2 ensures the triggers are laid out evenly within the TabsList.
+  */}
+              <TabsList className="grid w-full sm:w-auto grid-cols-2">
                 <TabsTrigger value="myItems">My Items</TabsTrigger>
                 <TabsTrigger value="featured">Featured on JewelConnect</TabsTrigger>
               </TabsList>
-              
-              <div className="flex space-x-2">
-                <Button 
-                  variant="outline" 
-                  size="sm" 
+
+              {/*
+    View Mode Buttons:
+    - flex space-x-2: Maintains horizontal spacing between the two buttons.
+    - flex-shrink-0: Prevents these buttons from shrinking if space is very constrained.
+  */}
+              <div className="flex space-x-2 flex-shrink-0">
+                <Button
+                  variant="outline"
+                  size="sm"
                   className={viewMode === "grid" ? "bg-neutral-100" : ""}
                   onClick={() => setViewMode("grid")}
                 >
                   <LayoutGrid className="h-4 w-4" />
                 </Button>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   size="sm"
                   className={viewMode === "list" ? "bg-neutral-100" : ""}
                   onClick={() => setViewMode("list")}
                 >
+                  {/* List SVG icon */}
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-list">
-                    <line x1="8" x2="21" y1="6" y2="6"/>
-                    <line x1="8" x2="21" y1="12" y2="12"/>
-                    <line x1="8" x2="21" y1="18" y2="18"/>
-                    <line x1="3" x2="3.01" y1="6" y2="6"/>
-                    <line x1="3" x2="3.01" y1="12" y2="12"/>
-                    <line x1="3" x2="3.01" y1="18" y2="18"/>
+                    <line x1="8" x2="21" y1="6" y2="6" />
+                    <line x1="8" x2="21" y1="12" y2="12" />
+                    <line x1="8" x2="21" y1="18" y2="18" />
+                    <line x1="3" x2="3.01" y1="6" y2="6" />
+                    <line x1="3" x2="3.01" y1="12" y2="12" />
+                    <line x1="3" x2="3.01" y1="18" y2="18" />
                   </svg>
                 </Button>
               </div>
             </div>
-            
             <TabsContent value="myItems">
               {isLoading ? (
                 viewMode === "grid" ? (
@@ -399,9 +410,9 @@ export default function InventoryPage() {
                       <div key={item.id} className="group relative bg-white rounded-lg overflow-hidden shadow-sm transition-all hover:shadow-md">
                         <div className="aspect-square bg-neutral-100 relative">
                           {item.imageUrl ? (
-                            <img 
-                              src={item.imageUrl} 
-                              alt={item.title} 
+                            <img
+                              src={item.imageUrl}
+                              alt={item.title}
                               className="w-full h-full object-cover"
                             />
                           ) : (
@@ -409,16 +420,16 @@ export default function InventoryPage() {
                               <Image className="h-12 w-12 text-neutral-300" />
                             </div>
                           )}
-                          
+
                           {/* Overlay with actions */}
                           <div className="absolute inset-0 bg-neutral-900/70 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                             <div className="flex space-x-2">
                               <Button size="sm" variant="outline" className="text-white border-white hover:bg-white/20">
                                 Edit
                               </Button>
-                              <Button 
-                                size="sm" 
-                                variant="outline" 
+                              <Button
+                                size="sm"
+                                variant="outline"
                                 className="text-white border-white hover:bg-white/20"
                                 onClick={() => handleDeleteItem(item.id)}
                               >
@@ -426,7 +437,7 @@ export default function InventoryPage() {
                               </Button>
                             </div>
                           </div>
-                          
+
                           {/* Badges */}
                           {(item.isNew || item.isFeatured) && (
                             <div className="absolute top-2 right-2 flex flex-col gap-2">
@@ -439,7 +450,7 @@ export default function InventoryPage() {
                             </div>
                           )}
                         </div>
-                        
+
                         <div className="p-4">
                           <h3 className="font-serif text-lg font-semibold text-neutral-800 line-clamp-1">{item.title}</h3>
                           <p className="text-neutral-600 text-sm mt-1 line-clamp-2">{item.description}</p>
@@ -449,9 +460,9 @@ export default function InventoryPage() {
                         </div>
                       </div>
                     ))}
-                    
+
                     {/* Add item card */}
-                    <div 
+                    <div
                       className="aspect-square bg-neutral-100 rounded-lg border-2 border-dashed border-neutral-300 flex flex-col items-center justify-center cursor-pointer hover:border-primary transition-colors"
                       onClick={() => setOpenCreateDialog(true)}
                     >
@@ -466,9 +477,9 @@ export default function InventoryPage() {
                       <div key={item.id} className="flex bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all">
                         <div className="w-40 h-40 bg-neutral-100 relative">
                           {item.imageUrl ? (
-                            <img 
-                              src={item.imageUrl} 
-                              alt={item.title} 
+                            <img
+                              src={item.imageUrl}
+                              alt={item.title}
                               className="w-full h-full object-cover"
                             />
                           ) : (
@@ -476,7 +487,7 @@ export default function InventoryPage() {
                               <Image className="h-12 w-12 text-neutral-300" />
                             </div>
                           )}
-                          
+
                           {/* Badges */}
                           {(item.isNew || item.isFeatured) && (
                             <div className="absolute top-2 right-2 flex flex-col gap-2">
@@ -489,7 +500,7 @@ export default function InventoryPage() {
                             </div>
                           )}
                         </div>
-                        
+
                         <div className="flex-1 p-4 flex flex-col">
                           <div className="flex-1">
                             <h3 className="font-serif text-xl font-semibold text-neutral-800">{item.title}</h3>
@@ -498,14 +509,14 @@ export default function InventoryPage() {
                               Added on {new Date(item.createdAt).toLocaleDateString()}
                             </p>
                           </div>
-                          
+
                           <div className="flex justify-end space-x-2 mt-4">
                             <Button size="sm" variant="outline">
                               Edit
                             </Button>
-                            <Button 
-                              size="sm" 
-                              variant="outline" 
+                            <Button
+                              size="sm"
+                              variant="outline"
                               onClick={() => handleDeleteItem(item.id)}
                             >
                               <Trash2 className="h-4 w-4 mr-1" /> Delete
@@ -529,7 +540,7 @@ export default function InventoryPage() {
                 </div>
               )}
             </TabsContent>
-            
+
             <TabsContent value="featured">
               {isFeaturedLoading ? (
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -548,9 +559,9 @@ export default function InventoryPage() {
                       <div key={item.id} className="group relative rounded-lg overflow-hidden cursor-pointer">
                         <div className="aspect-square bg-neutral-100">
                           {item.imageUrl ? (
-                            <img 
-                              src={item.imageUrl} 
-                              alt={item.title} 
+                            <img
+                              src={item.imageUrl}
+                              alt={item.title}
                               className="w-full h-full object-cover transition-all group-hover:scale-105"
                             />
                           ) : (
@@ -559,14 +570,14 @@ export default function InventoryPage() {
                             </div>
                           )}
                         </div>
-                        
+
                         <div className="absolute inset-0 bg-gradient-to-t from-neutral-900/80 to-transparent opacity-0 group-hover:opacity-100 transition-all flex flex-col justify-end p-4">
                           <h3 className="font-serif text-white text-lg font-bold">{item.title}</h3>
                           {item.creator && (
                             <p className="text-white/80 text-sm">by {item.creator.fullName}</p>
                           )}
                         </div>
-                        
+
                         {item.isNew && (
                           <div className="absolute top-3 right-3">
                             <span className="bg-secondary text-neutral-900 text-xs font-bold py-1 px-2 rounded-md">New</span>
@@ -575,7 +586,7 @@ export default function InventoryPage() {
                       </div>
                     ))}
                   </div>
-                  
+
                   <div className="text-center py-6">
                     <p className="text-neutral-600 mb-4">
                       Want your work to be featured on JewelConnect? Mark your items as "Featured" when creating or editing them.
@@ -601,7 +612,7 @@ export default function InventoryPage() {
           </Tabs>
         </div>
       </main>
-      
+
       <Footer />
     </>
   );

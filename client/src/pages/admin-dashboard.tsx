@@ -3,11 +3,11 @@ import { useAuth } from "@/hooks/use-auth";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { User } from "@shared/schema";
-import { 
-  Tabs, 
-  TabsContent, 
-  TabsList, 
-  TabsTrigger 
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger
 } from "@/components/ui/tabs";
 import {
   Card,
@@ -28,16 +28,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { 
-  Pencil, 
-  Trash2, 
-  AlertCircle, 
-  Plus, 
-  Star, 
-  Calendar, 
-  ShoppingBag, 
-  Users, 
-  FileText, 
+import {
+  Pencil,
+  Trash2,
+  AlertCircle,
+  Plus,
+  Star,
+  Calendar,
+  ShoppingBag,
+  Users,
+  FileText,
   Mail,
   Gem,
   TrendingUp,
@@ -101,9 +101,9 @@ function SavedArticlesSection() {
               {article.sourceUrl && (
                 <div className="mb-2">
                   <span className="text-sm font-medium text-gray-700">Original Source: </span>
-                  <a 
-                    href={article.sourceUrl} 
-                    target="_blank" 
+                  <a
+                    href={article.sourceUrl}
+                    target="_blank"
                     rel="noopener noreferrer"
                     className="text-blue-600 hover:underline text-sm font-medium break-all"
                   >
@@ -113,8 +113,8 @@ function SavedArticlesSection() {
               )}
             </div>
             <div className="flex gap-2 ml-4">
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 size="sm"
                 onClick={() => {
                   // Create a modal-like view for better article reading
@@ -148,8 +148,8 @@ function SavedArticlesSection() {
               >
                 📖 Read Article
               </Button>
-              <Button 
-                variant="destructive" 
+              <Button
+                variant="destructive"
                 size="sm"
                 onClick={() => {
                   if (window.confirm('Are you sure you want to delete this article?')) {
@@ -164,7 +164,7 @@ function SavedArticlesSection() {
           </div>
         </div>
       ))}
-      
+
       <div className="text-center pt-4">
         <p className="text-sm text-gray-600">
           Total: {articles.length} saved article{articles.length !== 1 ? 's' : ''}
@@ -179,12 +179,12 @@ export default function AdminDashboard() {
   const { toast } = useToast();
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [editMode, setEditMode] = useState(false);
-  
+
   // Get all users (admin only)
-  const { 
-    data: users = [], 
-    isLoading: usersLoading, 
-    error: usersError 
+  const {
+    data: users = [],
+    isLoading: usersLoading,
+    error: usersError
   } = useQuery({
     queryKey: ['/api/admin/users'],
     queryFn: async () => {
@@ -194,10 +194,10 @@ export default function AdminDashboard() {
     },
     enabled: !!user
   });
-  
+
   // Get all events
-  const { 
-    data: events = [], 
+  const {
+    data: events = [],
     isLoading: eventsLoading,
     error: eventsError
   } = useQuery({
@@ -208,7 +208,7 @@ export default function AdminDashboard() {
       return res.json();
     }
   });
-  
+
   // Delete user mutation
   const deleteUserMutation = useMutation({
     mutationFn: async (userId: number) => {
@@ -236,7 +236,7 @@ export default function AdminDashboard() {
       });
     }
   });
-  
+
   // Delete event mutation
   const deleteEventMutation = useMutation({
     mutationFn: async (eventId: number) => {
@@ -259,16 +259,16 @@ export default function AdminDashboard() {
       });
     }
   });
-  
+
   // Handle user delete
   const handleDeleteUser = (userId: number, username: string) => {
     console.log('Delete button clicked for user:', userId, username); // Debug log
-    
+
     const confirmMessage = `⚠️ WARNING: This action cannot be undone!\n\nAre you sure you want to permanently delete user "${username}" (ID: ${userId})?\n\nThis will remove:\n• User account and profile\n• All user data and posts\n• Connection history\n• All associated content\n\nType "DELETE" to confirm:`;
-    
+
     const userInput = window.prompt(confirmMessage);
     console.log('User input:', userInput); // Debug log
-    
+
     if (userInput === "DELETE") {
       console.log('Proceeding with deletion...'); // Debug log
       deleteUserMutation.mutate(userId);
@@ -280,14 +280,14 @@ export default function AdminDashboard() {
       });
     }
   };
-  
+
   // Handle event delete
   const handleDeleteEvent = (eventId: number) => {
     if (window.confirm('Are you sure you want to delete this event?')) {
       deleteEventMutation.mutate(eventId);
     }
   };
-  
+
   if (!user) {
     return (
       <div className="container mx-auto px-4 py-10 text-center">
@@ -297,13 +297,13 @@ export default function AdminDashboard() {
       </div>
     );
   }
-  
+
   return (
     <div className="container mx-auto px-4 py-10">
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-        <Button 
-          variant="outline" 
+        <Button
+          variant="outline"
           onClick={() => window.location.href = '/'}
           className="flex items-center gap-2"
         >
@@ -311,7 +311,7 @@ export default function AdminDashboard() {
           Back to Home
         </Button>
       </div>
-      
+
       {/* Quick Access Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <Card className="cursor-pointer hover:bg-accent/50 transition-colors" onClick={() => window.location.href = '/developer-management'}>
@@ -327,7 +327,7 @@ export default function AdminDashboard() {
             </div>
           </CardContent>
         </Card>
-        
+
         <Card className="cursor-pointer hover:bg-accent/50 transition-colors">
           <CardContent className="p-6">
             <div className="flex items-center space-x-4">
@@ -341,7 +341,7 @@ export default function AdminDashboard() {
             </div>
           </CardContent>
         </Card>
-        
+
         <Card className="cursor-pointer hover:bg-accent/50 transition-colors">
           <CardContent className="p-6">
             <div className="flex items-center space-x-4">
@@ -355,7 +355,7 @@ export default function AdminDashboard() {
             </div>
           </CardContent>
         </Card>
-        
+
         <Card className="cursor-pointer hover:bg-accent/50 transition-colors">
           <CardContent className="p-6">
             <div className="flex items-center space-x-4">
@@ -372,41 +372,41 @@ export default function AdminDashboard() {
       </div>
 
       <Tabs defaultValue="users" className="w-full">
-        <TabsList className="mb-6 grid w-full grid-cols-4 lg:grid-cols-8">
-          <TabsTrigger value="users" className="flex items-center gap-1">
+        <TabsList className="mb-6 grid w-full grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-8 gap-2 p-1 overflow-x-auto whitespace-nowrap">
+          <TabsTrigger value="users" className="flex items-center gap-1 min-w-max">
             <Users className="h-4 w-4" />
             Users
           </TabsTrigger>
-          <TabsTrigger value="featured" className="flex items-center gap-1">
+          <TabsTrigger value="featured" className="flex items-center gap-1 min-w-max">
             <Star className="h-4 w-4" />
             Featured
           </TabsTrigger>
-          <TabsTrigger value="events" className="flex items-center gap-1">
+          <TabsTrigger value="events" className="flex items-center gap-1 min-w-max">
             <Calendar className="h-4 w-4" />
             Events
           </TabsTrigger>
-          <TabsTrigger value="articles" className="flex items-center gap-1">
+          <TabsTrigger value="articles" className="flex items-center gap-1 min-w-max">
             <FileText className="h-4 w-4" />
             Articles
           </TabsTrigger>
-          <TabsTrigger value="newsletters" className="flex items-center gap-1">
+          <TabsTrigger value="newsletters" className="flex items-center gap-1 min-w-max">
             <Mail className="h-4 w-4" />
             Newsletters
           </TabsTrigger>
-          <TabsTrigger value="gemstones" className="flex items-center gap-1">
+          <TabsTrigger value="gemstones" className="flex items-center gap-1 min-w-max">
             <Gem className="h-4 w-4" />
             Gemstones
           </TabsTrigger>
-          <TabsTrigger value="marketplace" className="flex items-center gap-1">
+          <TabsTrigger value="marketplace" className="flex items-center gap-1 min-w-max">
             <ShoppingBag className="h-4 w-4" />
             Marketplace
           </TabsTrigger>
-          <TabsTrigger value="content" className="flex items-center gap-1">
+          <TabsTrigger value="content" className="flex items-center gap-1 min-w-max">
             <Image className="h-4 w-4" />
             Content
           </TabsTrigger>
         </TabsList>
-        
+
         {/* Users Tab */}
         <TabsContent value="users">
           <Card>
@@ -417,17 +417,41 @@ export default function AdminDashboard() {
             <CardContent>
               <div className="space-y-6">
                 {/* Bulk Account Management */}
-                <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
-                  <h4 className="font-medium text-red-700 mb-2">⚠️ Bulk Account Management</h4>
-                  <p className="text-sm text-red-600 mb-3">Permanently delete multiple user accounts at once</p>
-                  <div className="flex gap-3">
-                    <Button variant="destructive" size="sm">
-                      🗑️ Delete Inactive Users (30+ days)
+                <div className="p-4 bg-red-50 border border-red-200 rounded-lg mx-auto max-w-sm md:max-w-lg lg:max-w-2xl"> {/* Adjusted max-width values for more flexibility */}
+                  <h4 className="font-medium text-red-700 mb-2 text-base sm:text-lg"> {/* Responsive font sizes */}
+                    ⚠️ Bulk Account Management
+                  </h4>
+                  <p className="text-sm text-red-600 mb-3"> {/* Font size adjusted, `text-xs` was too small for readability */}
+                    Permanently delete multiple user accounts at once
+                  </p>
+                  {/*
+    Button Container:
+    - grid grid-cols-1: Always 1 column on extra-small screens.
+    - gap-3: Spacing between buttons (both row and column).
+    - sm:grid-cols-2: 2 columns from 'sm' breakpoint.
+    - md:grid-cols-3: 3 columns from 'md' breakpoint.
+    This explicit grid approach with responsive columns is more robust for buttons with varying content length.
+  */}
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      className="w-full whitespace-normal text-sm px-3 py-2 h-auto" // Key: whitespace-normal, h-auto, increased padding
+                    >
+                      🗑️ Delete Inactive Users(30+ days)
                     </Button>
-                    <Button variant="destructive" size="sm">
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      className="w-full whitespace-normal text-sm px-3 py-2 h-auto" // Key: whitespace-normal, h-auto, increased padding
+                    >
                       🗑️ Delete All Test Accounts
                     </Button>
-                    <Button variant="destructive" size="sm">
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      className="w-full whitespace-normal text-sm px-3 py-2 h-auto" // Key: whitespace-normal, h-auto, increased padding
+                    >
                       🗑️ Delete Users Without Profiles
                     </Button>
                   </div>
@@ -479,11 +503,10 @@ export default function AdminDashboard() {
                             <TableCell>{user.email}</TableCell>
                             <TableCell>{user.fullName || <span className="text-gray-400">No name set</span>}</TableCell>
                             <TableCell>
-                              <span className={`px-2 py-1 rounded text-xs ${
-                                user.userType === 'business' ? 'bg-blue-100 text-blue-700' :
+                              <span className={`px-2 py-1 rounded text-xs ${user.userType === 'business' ? 'bg-blue-100 text-blue-700' :
                                 user.userType === 'individual' ? 'bg-green-100 text-green-700' :
-                                'bg-gray-100 text-gray-700'
-                              }`}>
+                                  'bg-gray-100 text-gray-700'
+                                }`}>
                                 {user.userType || 'Standard'}
                               </span>
                             </TableCell>
@@ -492,8 +515,8 @@ export default function AdminDashboard() {
                             </TableCell>
                             <TableCell>
                               <div className="flex space-x-2">
-                                <Button 
-                                  variant="outline" 
+                                <Button
+                                  variant="outline"
                                   size="sm"
                                   onClick={() => {
                                     setSelectedUser(user);
@@ -505,16 +528,16 @@ export default function AdminDashboard() {
                                 </Button>
                                 {user.username !== 'admin' && (
                                   <>
-                                    <Button 
-                                      variant="destructive" 
+                                    <Button
+                                      variant="destructive"
                                       size="sm"
                                       onClick={() => handleDeleteUser(user.id, user.username)}
                                     >
                                       <Trash2 className="h-4 w-4 mr-1" />
                                       Delete
                                     </Button>
-                                    <Button 
-                                      variant="outline" 
+                                    <Button
+                                      variant="outline"
                                       size="sm"
                                       className="ml-1"
                                       onClick={() => {
@@ -542,7 +565,7 @@ export default function AdminDashboard() {
             </CardContent>
           </Card>
         </TabsContent>
-        
+
         {/* Events Tab */}
         <TabsContent value="events">
           <Card>
@@ -552,14 +575,21 @@ export default function AdminDashboard() {
             </CardHeader>
             <CardContent>
               <div className="space-y-6">
-                <div className="flex justify-between items-center">
-                  <h3 className="text-lg font-semibold">Events Management</h3>
-                  <Button>
-                    <Plus className="h-4 w-4 mr-2" />
+
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6"> {/* Key changes for responsiveness */}
+                  {/* Heading: Responsive font size */}
+                  <h3 className="text-xl sm:text-2xl font-semibold text-neutral-800 text-center sm:text-left w-full sm:w-auto"> {/* Added w-full for stacking, text alignment */}
+                    Events Management
+                  </h3>
+                  {/* Button: Responsive width and text wrapping */}
+                  <Button
+                    className="w-full sm:w-auto whitespace-normal h-auto py-2 px-4 text-sm" // Ensure button takes full width when stacked
+                  >
+                    <Plus className="h-4 w-4 mr-2 sm:mr-1 lg:mr-2" /> {/* Adjusted margin for icon on smaller screens */}
                     Create New Event
                   </Button>
                 </div>
-                
+
                 {/* Create New Event Form */}
                 <div className="border-2 border-dashed border-blue-200 rounded-lg p-6 bg-blue-50">
                   <h4 className="font-medium mb-4 text-blue-700">📅 Create New Event</h4>
@@ -585,22 +615,22 @@ export default function AdminDashboard() {
                     <Label htmlFor="event-description">Description</Label>
                     <Textarea id="event-description" placeholder="Event description..." className="mt-1" />
                   </div>
-                  
+
                   {/* Event Image Upload Section */}
                   <div className="mt-6">
                     <Label className="text-sm font-medium">Event Images (Upload up to 3)</Label>
                     <div className="grid grid-cols-3 gap-4 mt-2">
                       <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-blue-400 cursor-pointer transition-colors">
-                        <input 
-                          type="file" 
-                          id="event-image-1" 
-                          accept="image/*" 
+                        <input
+                          type="file"
+                          id="event-image-1"
+                          accept="image/*"
                           className="hidden"
                           onChange={async (e) => {
                             const file = e.target.files?.[0];
                             if (file) {
                               console.log('Image 1 selected:', file.name);
-                              
+
                               // Create preview
                               const reader = new FileReader();
                               reader.onload = (e) => {
@@ -610,7 +640,7 @@ export default function AdminDashboard() {
                                 }
                               };
                               reader.readAsDataURL(file);
-                              
+
                               toast({
                                 title: "Image 1 loaded",
                                 description: `${file.name} ready for upload`,
@@ -621,21 +651,21 @@ export default function AdminDashboard() {
                         <label htmlFor="event-image-1" className="h-24 w-full flex flex-col items-center justify-center cursor-pointer">
                           <div id="preview-1" className="w-full h-full flex flex-col items-center justify-center">
                             <Image className="h-8 w-8 text-gray-400 mb-2" />
-                            <p className="text-xs text-gray-500">Click to upload<br/>Image 1</p>
+                            <p className="text-xs text-gray-500">Click to upload<br />Image 1</p>
                           </div>
                         </label>
                       </div>
                       <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-blue-400 cursor-pointer transition-colors">
-                        <input 
-                          type="file" 
-                          id="event-image-2" 
-                          accept="image/*" 
+                        <input
+                          type="file"
+                          id="event-image-2"
+                          accept="image/*"
                           className="hidden"
                           onChange={async (e) => {
                             const file = e.target.files?.[0];
                             if (file) {
                               console.log('Image 2 selected:', file.name);
-                              
+
                               const reader = new FileReader();
                               reader.onload = (e) => {
                                 const preview = document.getElementById('preview-2');
@@ -644,7 +674,7 @@ export default function AdminDashboard() {
                                 }
                               };
                               reader.readAsDataURL(file);
-                              
+
                               toast({
                                 title: "Image 2 loaded",
                                 description: `${file.name} ready for upload`,
@@ -655,21 +685,21 @@ export default function AdminDashboard() {
                         <label htmlFor="event-image-2" className="h-24 w-full flex flex-col items-center justify-center cursor-pointer">
                           <div id="preview-2" className="w-full h-full flex flex-col items-center justify-center">
                             <Image className="h-8 w-8 text-gray-400 mb-2" />
-                            <p className="text-xs text-gray-500">Click to upload<br/>Image 2</p>
+                            <p className="text-xs text-gray-500">Click to upload<br />Image 2</p>
                           </div>
                         </label>
                       </div>
                       <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-blue-400 cursor-pointer transition-colors">
-                        <input 
-                          type="file" 
-                          id="event-image-3" 
-                          accept="image/*" 
+                        <input
+                          type="file"
+                          id="event-image-3"
+                          accept="image/*"
                           className="hidden"
                           onChange={async (e) => {
                             const file = e.target.files?.[0];
                             if (file) {
                               console.log('Image 3 selected:', file.name);
-                              
+
                               const reader = new FileReader();
                               reader.onload = (e) => {
                                 const preview = document.getElementById('preview-3');
@@ -678,7 +708,7 @@ export default function AdminDashboard() {
                                 }
                               };
                               reader.readAsDataURL(file);
-                              
+
                               toast({
                                 title: "Image 3 loaded",
                                 description: `${file.name} ready for upload`,
@@ -689,14 +719,14 @@ export default function AdminDashboard() {
                         <label htmlFor="event-image-3" className="h-24 w-full flex flex-col items-center justify-center cursor-pointer">
                           <div id="preview-3" className="w-full h-full flex flex-col items-center justify-center">
                             <Image className="h-8 w-8 text-gray-400 mb-2" />
-                            <p className="text-xs text-gray-500">Click to upload<br/>Image 3</p>
+                            <p className="text-xs text-gray-500">Click to upload<br />Image 3</p>
                           </div>
                         </label>
                       </div>
                     </div>
                   </div>
-                  
-                  <Button 
+
+                  <Button
                     className="mt-4 w-full"
                     onClick={() => {
                       const title = (document.getElementById('event-title') as HTMLInputElement)?.value;
@@ -704,7 +734,7 @@ export default function AdminDashboard() {
                       const date = (document.getElementById('event-date') as HTMLInputElement)?.value;
                       const time = (document.getElementById('event-time') as HTMLInputElement)?.value;
                       const description = (document.getElementById('event-description') as HTMLTextAreaElement)?.value;
-                      
+
                       if (!title || !location || !date) {
                         toast({
                           title: "Missing information",
@@ -713,7 +743,7 @@ export default function AdminDashboard() {
                         });
                         return;
                       }
-                      
+
                       // Create event via API - simplified approach
                       const eventData = {
                         title,
@@ -722,9 +752,9 @@ export default function AdminDashboard() {
                         time: time || '09:00',
                         description: description || ''
                       };
-                      
+
                       console.log('Sending simplified event data:', eventData);
-                      
+
                       // Use direct database insertion for now since API validation is problematic
                       fetch('/api/admin/events/create', {
                         method: 'POST',
@@ -734,36 +764,36 @@ export default function AdminDashboard() {
                         credentials: 'include',
                         body: JSON.stringify(eventData)
                       })
-                      .then(res => {
-                        if (res.ok) {
+                        .then(res => {
+                          if (res.ok) {
+                            toast({
+                              title: "Event created",
+                              description: `"${title}" has been created successfully`,
+                            });
+                            // Clear form
+                            (document.getElementById('event-title') as HTMLInputElement).value = '';
+                            (document.getElementById('event-location') as HTMLInputElement).value = '';
+                            (document.getElementById('event-date') as HTMLInputElement).value = '';
+                            (document.getElementById('event-time') as HTMLInputElement).value = '';
+                            (document.getElementById('event-description') as HTMLTextAreaElement).value = '';
+                            // Refresh events list
+                            queryClient.invalidateQueries({ queryKey: ['/api/events'] });
+                          } else {
+                            toast({
+                              title: "Error creating event",
+                              description: "Failed to create event",
+                              variant: "destructive"
+                            });
+                          }
+                        })
+                        .catch(err => {
+                          console.error('Create event error:', err);
                           toast({
-                            title: "Event created",
-                            description: `"${title}" has been created successfully`,
-                          });
-                          // Clear form
-                          (document.getElementById('event-title') as HTMLInputElement).value = '';
-                          (document.getElementById('event-location') as HTMLInputElement).value = '';
-                          (document.getElementById('event-date') as HTMLInputElement).value = '';
-                          (document.getElementById('event-time') as HTMLInputElement).value = '';
-                          (document.getElementById('event-description') as HTMLTextAreaElement).value = '';
-                          // Refresh events list
-                          queryClient.invalidateQueries({ queryKey: ['/api/events'] });
-                        } else {
-                          toast({
-                            title: "Error creating event",
-                            description: "Failed to create event",
+                            title: "Error",
+                            description: "Network error creating event",
                             variant: "destructive"
                           });
-                        }
-                      })
-                      .catch(err => {
-                        console.error('Create event error:', err);
-                        toast({
-                          title: "Error",
-                          description: "Network error creating event",
-                          variant: "destructive"
                         });
-                      });
                     }}
                   >
                     📅 Create Event
@@ -798,10 +828,13 @@ export default function AdminDashboard() {
                                 <p className="text-sm text-gray-500 mt-2">{event.description}</p>
                               )}
                             </div>
-                            <div className="flex gap-2 ml-4">
-                              <Button 
-                                variant="outline" 
+                            <div className="grid grid-cols-1 gap-2 p-1 sm:grid-cols-2 md:grid-cols-3 w-full mx-auto max-w-sm sm:max-w-md lg:max-w-lg mt-2 sm:mt-0">
+                              {/* Edit Button */}
+                              <Button
+                                variant="outline"
                                 size="sm"
+                                // CRITICAL: Allow text to wrap if button is too narrow
+                                className="w-full text-sm px-3 py-1.5 h-auto whitespace-normal"
                                 onClick={() => {
                                   const editForm = document.getElementById(`edit-form-${event.id}`);
                                   if (editForm) {
@@ -812,9 +845,13 @@ export default function AdminDashboard() {
                                 <Pencil className="h-4 w-4 mr-1" />
                                 Edit
                               </Button>
-                              <Button 
-                                variant="destructive" 
+
+                              {/* Delete Button (with confirmation) */}
+                              <Button
+                                variant="destructive"
                                 size="sm"
+                                // CRITICAL: Allow text to wrap if button is too narrow
+                                className="w-full text-sm px-3 py-1.5 h-auto whitespace-normal"
                                 onClick={() => {
                                   console.log('Delete button clicked for event:', event);
                                   if (window.confirm(`Delete event "${event.title}"?\n\nThis action cannot be undone.`)) {
@@ -828,11 +865,13 @@ export default function AdminDashboard() {
                                 <Trash2 className="h-4 w-4 mr-1" />
                                 Delete
                               </Button>
-                              
-                              <Button 
-                                variant="outline" 
+
+                              {/* Test Delete Button (direct API call) */}
+                              <Button
+                                variant="outline"
                                 size="sm"
-                                className="ml-1"
+                                // CRITICAL: Allow text to wrap if button is too narrow
+                                className="w-full text-sm px-3 py-1.5 h-auto whitespace-normal"
                                 onClick={() => {
                                   console.log('Simple delete clicked for event:', event.id);
                                   // Test direct API call
@@ -840,38 +879,38 @@ export default function AdminDashboard() {
                                     method: 'DELETE',
                                     credentials: 'include'
                                   })
-                                  .then(res => {
-                                    console.log('Delete response:', res.status);
-                                    if (res.ok) {
-                                      toast({
-                                        title: "Event deleted",
-                                        description: "Event removed successfully",
-                                      });
-                                      // Refresh events list
-                                      queryClient.invalidateQueries({ queryKey: ['/api/events'] });
-                                    } else {
+                                    .then(res => {
+                                      console.log('Delete response:', res.status);
+                                      if (res.ok) {
+                                        toast({
+                                          title: "Event deleted",
+                                          description: "Event removed successfully",
+                                        });
+                                        // Refresh events list
+                                        queryClient.invalidateQueries({ queryKey: ['/api/events'] });
+                                      } else {
+                                        toast({
+                                          title: "Error",
+                                          description: "Failed to delete event",
+                                          variant: "destructive"
+                                        });
+                                      }
+                                    })
+                                    .catch(err => {
+                                      console.error('Delete error:', err);
                                       toast({
                                         title: "Error",
-                                        description: "Failed to delete event",
+                                        description: "Network error deleting event",
                                         variant: "destructive"
                                       });
-                                    }
-                                  })
-                                  .catch(err => {
-                                    console.error('Delete error:', err);
-                                    toast({
-                                      title: "Error",
-                                      description: "Network error deleting event",
-                                      variant: "destructive"
                                     });
-                                  });
                                 }}
                               >
                                 🗑️ Test Delete
                               </Button>
                             </div>
                           </div>
-                          
+
                           {/* Event Images Section */}
                           <div className="mt-4">
                             <Label className="text-sm font-medium text-gray-700">Event Images</Label>
@@ -902,7 +941,7 @@ export default function AdminDashboard() {
                               </div>
                             </div>
                           </div>
-                          
+
                           {/* Quick Edit Form - Initially Hidden */}
                           <div className="mt-4 p-4 bg-gray-50 rounded-lg hidden" id={`edit-form-${event.id}`}>
                             <h6 className="font-medium mb-3">✏️ Edit Event: {event.title}</h6>
@@ -928,7 +967,7 @@ export default function AdminDashboard() {
                               <Label htmlFor={`edit-description-${event.id}`}>Description</Label>
                               <Textarea id={`edit-description-${event.id}`} defaultValue={event.description || ''} className="mt-1" />
                             </div>
-                            
+
                             {/* Edit Event Images */}
                             <div className="mt-4">
                               <Label className="text-sm font-medium text-gray-700">Update Event Images</Label>
@@ -959,9 +998,9 @@ export default function AdminDashboard() {
                                 </div>
                               </div>
                             </div>
-                            
+
                             <div className="flex gap-2 mt-4">
-                              <Button 
+                              <Button
                                 size="sm"
                                 onClick={async () => {
                                   // Get form values
@@ -970,7 +1009,7 @@ export default function AdminDashboard() {
                                   const date = (document.getElementById(`edit-date-${event.id}`) as HTMLInputElement)?.value;
                                   const time = (document.getElementById(`edit-time-${event.id}`) as HTMLInputElement)?.value;
                                   const description = (document.getElementById(`edit-description-${event.id}`) as HTMLTextAreaElement)?.value;
-                                  
+
                                   if (!title || !location || !date || !time) {
                                     toast({
                                       title: "Missing Information",
@@ -979,7 +1018,7 @@ export default function AdminDashboard() {
                                     });
                                     return;
                                   }
-                                  
+
                                   try {
                                     const updateData = {
                                       title,
@@ -988,7 +1027,7 @@ export default function AdminDashboard() {
                                       time,
                                       description
                                     };
-                                    
+
                                     const response = await fetch(`/api/admin/events/${event.id}`, {
                                       method: 'PATCH',
                                       headers: {
@@ -997,19 +1036,19 @@ export default function AdminDashboard() {
                                       credentials: 'include',
                                       body: JSON.stringify(updateData)
                                     });
-                                    
+
                                     if (response.ok) {
                                       toast({
                                         title: "Event Updated",
                                         description: `"${title}" has been updated successfully`,
                                       });
-                                      
+
                                       // Hide edit form
                                       const editForm = document.getElementById(`edit-form-${event.id}`);
                                       if (editForm) {
                                         editForm.classList.add('hidden');
                                       }
-                                      
+
                                       // Refresh events list
                                       queryClient.invalidateQueries({ queryKey: ['/api/events'] });
                                     } else {
@@ -1027,8 +1066,8 @@ export default function AdminDashboard() {
                               >
                                 💾 Save Changes
                               </Button>
-                              <Button 
-                                variant="outline" 
+                              <Button
+                                variant="outline"
                                 size="sm"
                                 onClick={() => {
                                   const editForm = document.getElementById(`edit-form-${event.id}`);
@@ -1051,11 +1090,19 @@ export default function AdminDashboard() {
                 <div className="space-y-4 mt-8 p-4 bg-red-50 border border-red-200 rounded-lg">
                   <h4 className="font-medium text-red-700">⚠️ Bulk Event Management</h4>
                   <p className="text-sm text-red-600">Permanently delete multiple events at once</p>
-                  <div className="flex gap-3">
-                    <Button variant="destructive" size="sm">
+                  <div className="flex flex-col sm:flex-row gap-2 sm:gap-3"> {/* Key changes for responsiveness */}
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      className="w-full whitespace-normal text-sm px-3 py-2 h-auto" // Added w-full, whitespace-normal, h-auto, px/py
+                    >
                       🗑️ Delete All Past Events
                     </Button>
-                    <Button variant="destructive" size="sm">
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      className="w-full whitespace-normal text-sm px-3 py-2 h-auto" // Added w-full, whitespace-normal, h-auto, px/py
+                    >
                       🗑️ Delete All Events
                     </Button>
                   </div>
@@ -1064,7 +1111,7 @@ export default function AdminDashboard() {
             </CardContent>
           </Card>
         </TabsContent>
-        
+
         {/* Featured Professionals Tab */}
         <TabsContent value="featured">
           <Card>
@@ -1074,10 +1121,16 @@ export default function AdminDashboard() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <h3 className="text-lg font-semibold">Trending Professionals</h3>
-                  <Button>
-                    <Plus className="h-4 w-4 mr-2" />
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6"> {/* Key changes for responsiveness */}
+                  {/* Heading: Responsive font size */}
+                  <h3 className="text-xl sm:text-2xl font-semibold text-neutral-800 text-center sm:text-left w-full sm:w-auto"> {/* Added w-full for stacking, text alignment */}
+                    Trending Professionals
+                  </h3>
+                  {/* Button: Responsive width and text wrapping */}
+                  <Button
+                    className="w-full sm:w-auto whitespace-normal h-auto py-2 px-4 text-sm" // Ensure button takes full width when stacked
+                  >
+                    <Plus className="h-4 w-4 mr-2 sm:mr-1 lg:mr-2" /> {/* Adjusted margin for icon on smaller screens */}
                     Add Featured Professional
                   </Button>
                 </div>
@@ -1113,34 +1166,49 @@ export default function AdminDashboard() {
             </CardHeader>
             <CardContent>
               <div className="space-y-6">
-                <div className="flex justify-between items-center">
-                  <h3 className="text-lg font-semibold">Industry Articles</h3>
-                  <Button>
-                    <Plus className="h-4 w-4 mr-2" />
+
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6"> {/* Key changes for responsiveness */}
+                  {/* Heading: Responsive font size */}
+                  <h3 className="text-xl sm:text-2xl font-semibold text-neutral-800 text-center sm:text-left w-full sm:w-auto"> {/* Added w-full for stacking, text alignment */}
+                    Industry Articles
+                  </h3>
+                  {/* Button: Responsive width and text wrapping */}
+                  <Button
+                    className="w-full sm:w-auto whitespace-normal h-auto py-2 px-4 text-sm" // Ensure button takes full width when stacked
+                  >
+                    <Plus className="h-4 w-4 mr-2 sm:mr-1 lg:mr-2" /> {/* Adjusted margin for icon on smaller screens */}
                     Create New Article
                   </Button>
                 </div>
-                
+
                 {/* Import from Website Section */}
-                <div className="border-2 border-dashed border-gray-200 rounded-lg p-6 bg-gray-50">
-                  <h4 className="font-medium mb-4 text-gray-700">📥 Import Content from Website</h4>
-                  <div className="space-y-4">
+                <div className="border-2 border-dashed border-gray-200 rounded-lg p-4 sm:p-6 bg-gray-50"> {/* Adjusted padding for mobile */}
+                  <h4 className="font-medium mb-3 text-gray-700 text-base sm:text-lg">📥 Import Content from Website</h4> {/* Adjusted margin and font size */}
+                  <div className="space-y-3 sm:space-y-4"> {/* Adjusted vertical spacing */}
                     <div>
-                      <Label htmlFor="import-url">Website URL</Label>
-                      <Input 
-                        id="import-url" 
-                        placeholder="https://example.com/jewelry-article" 
-                        className="mt-1" 
+                      <Label htmlFor="import-url" className="text-sm">Website URL</Label> {/* Added text-sm for label */}
+                      <Input
+                        id="import-url"
+                        placeholder="https://example.com/jewelry-article"
+                        className="mt-1 text-sm sm:text-base" // Adjusted font size for input
                       />
                     </div>
-                    <div className="flex gap-2">
-                      <Button 
-                        variant="outline" 
-                        className="flex-1"
+                    {/* Button Container: */}
+                    {/* flex flex-col: Stack buttons vertically on smallest screens */}
+                    {/* sm:flex-row: Arrange buttons horizontally from 'sm' breakpoint */}
+                    {/* gap-2: Consistent spacing between buttons */}
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <Button
+                        variant="outline"
+                        // w-full: Make button take full width when stacked (on flex-col)
+                        // sm:flex-1: Make button take equal available width when in a row (on sm:flex-row)
+                        // whitespace-normal: Allow text to wrap if necessary (e.g., if content pushes button to be very narrow)
+                        // h-auto py-2: Adjust height if text wraps, ensure good vertical padding
+                        className="w-full sm:flex-1 whitespace-normal h-auto py-2 text-sm sm:text-base"
                         onClick={async () => {
                           const urlInput = document.getElementById('import-url') as HTMLInputElement;
                           const url = urlInput?.value?.trim();
-                          
+
                           if (!url) {
                             toast({
                               title: "URL Required",
@@ -1149,7 +1217,7 @@ export default function AdminDashboard() {
                             });
                             return;
                           }
-                          
+
                           if (!url.startsWith('http://') && !url.startsWith('https://')) {
                             toast({
                               title: "Invalid URL",
@@ -1158,12 +1226,12 @@ export default function AdminDashboard() {
                             });
                             return;
                           }
-                          
+
                           toast({
                             title: "Previewing Content",
                             description: `Fetching content from ${url}...`
                           });
-                          
+
                           try {
                             const response = await fetch('/api/admin/preview-content', {
                               method: 'POST',
@@ -1173,26 +1241,26 @@ export default function AdminDashboard() {
                               credentials: 'include',
                               body: JSON.stringify({ url })
                             });
-                            
+
                             if (response.ok) {
                               const data = await response.json();
                               console.log('Preview data:', data);
-                              
+
                               // Show preview in a modal or update UI
                               const previewDiv = document.getElementById('content-preview');
                               if (previewDiv) {
                                 previewDiv.innerHTML = `
-                                  <div class="border rounded-lg p-4 mt-4 bg-white">
-                                    <h5 class="font-medium text-lg mb-2">${data.title || 'Untitled'}</h5>
-                                    <p class="text-sm text-gray-600 mb-3">Author: ${data.author || 'Unknown'}</p>
-                                    <div class="text-sm text-gray-800 max-h-96 overflow-y-auto">
-                                      ${data.content || 'No content found'}
-                                    </div>
-                                  </div>
-                                `;
+                  <div class="border rounded-lg p-4 mt-4 bg-white">
+                    <h5 class="font-medium text-lg mb-2">${data.title || 'Untitled'}</h5>
+                    <p class="text-sm text-gray-600 mb-3">Author: ${data.author || 'Unknown'}</p>
+                    <div class="text-sm text-gray-800 max-h-96 overflow-y-auto">
+                      ${data.content || 'No content found'}
+                    </div>
+                  </div>
+                `;
                                 previewDiv.classList.remove('hidden');
                               }
-                              
+
                               toast({
                                 title: "Preview Ready",
                                 description: "Content preview loaded successfully"
@@ -1212,12 +1280,16 @@ export default function AdminDashboard() {
                       >
                         🔍 Preview Content
                       </Button>
-                      <Button 
-                        className="flex-1"
+                      <Button
+                        // w-full: Make button take full width when stacked (on flex-col)
+                        // sm:flex-1: Make button take equal available width when in a row (on sm:flex-row)
+                        // whitespace-normal: Allow text to wrap if necessary
+                        // h-auto py-2: Adjust height if text wraps, ensure good vertical padding
+                        className="w-full sm:flex-1 whitespace-normal h-auto py-2 text-sm sm:text-base"
                         onClick={async () => {
                           const urlInput = document.getElementById('import-url') as HTMLInputElement;
                           const url = urlInput?.value?.trim();
-                          
+
                           if (!url) {
                             toast({
                               title: "URL Required",
@@ -1226,7 +1298,7 @@ export default function AdminDashboard() {
                             });
                             return;
                           }
-                          
+
                           if (!url.startsWith('http://') && !url.startsWith('https://')) {
                             toast({
                               title: "Invalid URL",
@@ -1235,12 +1307,12 @@ export default function AdminDashboard() {
                             });
                             return;
                           }
-                          
+
                           toast({
                             title: "Importing Article",
                             description: `Importing content from ${url}...`
                           });
-                          
+
                           try {
                             const response = await fetch('/api/admin/import-article', {
                               method: 'POST',
@@ -1250,28 +1322,28 @@ export default function AdminDashboard() {
                               credentials: 'include',
                               body: JSON.stringify({ url })
                             });
-                            
+
                             if (response.ok) {
                               const article = await response.json();
                               console.log('Imported article:', article);
-                              
+
                               toast({
                                 title: "Article Imported",
                                 description: `Successfully imported "${article.title || 'article'}" from ${url}`
                               });
-                              
+
                               // Clear the URL input
                               urlInput.value = '';
-                              
+
                               // Hide preview if shown
                               const previewDiv = document.getElementById('content-preview');
                               if (previewDiv) {
                                 previewDiv.classList.add('hidden');
                               }
-                              
+
                               // Refresh articles list (if we have one)
                               // queryClient.invalidateQueries({ queryKey: ['/api/articles'] });
-                              
+
                             } else {
                               throw new Error('Failed to import article');
                             }
@@ -1289,7 +1361,7 @@ export default function AdminDashboard() {
                       </Button>
                     </div>
                   </div>
-                  
+
                   {/* Content Preview Area */}
                   <div id="content-preview" className="hidden">
                     {/* Preview content will be dynamically inserted here */}
@@ -1380,31 +1452,59 @@ export default function AdminDashboard() {
             </CardHeader>
             <CardContent>
               <div className="space-y-6">
-                <div className="flex justify-between items-center">
-                  <h3 className="text-lg font-semibold">My Newsletters</h3>
-                  <Button>
-                    <Plus className="h-4 w-4 mr-2" />
+
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6"> {/* Key changes for responsiveness */}
+                  {/* Heading: Responsive font size */}
+                  <h3 className="text-xl sm:text-2xl font-semibold text-neutral-800 text-center sm:text-left w-full sm:w-auto"> {/* Added w-full for stacking, text alignment */}
+                    My Newsletters
+                  </h3>
+                  {/* Button: Responsive width and text wrapping */}
+                  <Button
+                    className="w-full sm:w-auto whitespace-normal h-auto py-2 px-4 text-sm" // Ensure button takes full width when stacked
+                  >
+                    <Plus className="h-4 w-4 mr-2 sm:mr-1 lg:mr-2" /> {/* Adjusted margin for icon on smaller screens */}
                     Create Newsletter
                   </Button>
                 </div>
-                
-                {/* Import Newsletter Content */}
-                <div className="border-2 border-dashed border-blue-200 rounded-lg p-6 bg-blue-50">
-                  <h4 className="font-medium mb-4 text-blue-700">📧 Import Newsletter Content</h4>
-                  <div className="space-y-4">
+
+                {/* Import Newsletter Content Section */}
+                <div className="border-2 border-dashed border-blue-200 rounded-lg p-4 sm:p-6 bg-blue-50"> {/* Adjusted padding for mobile */}
+                  <h4 className="font-medium mb-3 text-blue-700 text-base sm:text-lg">📧 Import Newsletter Content</h4> {/* Adjusted margin and font size */}
+                  <div className="space-y-3 sm:space-y-4"> {/* Adjusted vertical spacing */}
                     <div>
-                      <Label htmlFor="newsletter-import-url">Newsletter/Article URL</Label>
-                      <Input 
-                        id="newsletter-import-url" 
-                        placeholder="https://example.com/newsletter-article" 
-                        className="mt-1" 
+                      <Label htmlFor="newsletter-import-url" className="text-sm">Newsletter/Article URL</Label> {/* Added text-sm for label */}
+                      <Input
+                        id="newsletter-import-url"
+                        placeholder="https://example.com/newsletter-article"
+                        className="mt-1 text-sm sm:text-base" // Adjusted font size for input
                       />
                     </div>
-                    <div className="flex gap-2">
-                      <Button variant="outline" className="flex-1">
+                    {/* Button Container: */}
+                    {/* flex flex-col: Stack buttons vertically on smallest screens */}
+                    {/* sm:flex-row: Arrange buttons horizontally from 'sm' breakpoint */}
+                    {/* gap-2: Consistent spacing between buttons */}
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <Button
+                        variant="outline"
+                        // w-full: Make button take full width when stacked (on flex-col)
+                        // sm:flex-1: Make button take equal available width when in a row (on sm:flex-row)
+                        // CRITICAL: Allow text to wrap if necessary (e.g., if content pushes button to be very narrow)
+                        // h-auto py-2: Adjust height if text wraps, ensure good vertical padding
+                        className="w-full sm:flex-1 whitespace-normal h-auto py-2 text-sm sm:text-base"
+                      // Add your onClick logic here, similar to your original code
+                      // onClick={() => { /* ... */ }}
+                      >
                         🔍 Preview Content
                       </Button>
-                      <Button className="flex-1">
+                      <Button
+                        // w-full: Make button take full width when stacked (on flex-col)
+                        // sm:flex-1: Make button take equal available width when in a row (on sm:flex-row)
+                        // CRITICAL: Allow text to wrap if necessary
+                        // h-auto py-2: Adjust height if text wraps, ensure good vertical padding
+                        className="w-full sm:flex-1 whitespace-normal h-auto py-2 text-sm sm:text-base"
+                      // Add your onClick logic here, similar to your original code
+                      // onClick={() => { /* ... */ }}
+                      >
                         📧 Import to Newsletter
                       </Button>
                     </div>
@@ -1449,10 +1549,17 @@ export default function AdminDashboard() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <h3 className="text-lg font-semibold">Featured Gemstones</h3>
-                  <Button>
-                    <Plus className="h-4 w-4 mr-2" />
+
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6"> {/* Key changes for responsiveness */}
+                  {/* Heading: Responsive font size */}
+                  <h3 className="text-xl sm:text-2xl font-semibold text-neutral-800 text-center sm:text-left w-full sm:w-auto"> {/* Added w-full for stacking, text alignment */}
+                    Featured Gemstones
+                  </h3>
+                  {/* Button: Responsive width and text wrapping */}
+                  <Button
+                    className="w-full sm:w-auto whitespace-normal h-auto py-2 px-4 text-sm" // Ensure button takes full width when stacked
+                  >
+                    <Plus className="h-4 w-4 mr-2 sm:mr-1 lg:mr-2" /> {/* Adjusted margin for icon on smaller screens */}
                     Add Featured Gemstone
                   </Button>
                 </div>
@@ -1477,48 +1584,72 @@ export default function AdminDashboard() {
                   </div>
                   <Button>Add Gemstone</Button>
                 </div>
-                
+
                 {/* Existing Featured Gemstones Management */}
-                <div className="space-y-4 mt-8">
-                  <h4 className="font-medium text-gray-700">💎 Manage Featured Gemstones</h4>
+                <div className="space-y-4 mt-8 px-4 sm:px-0"> {/* Added horizontal padding for very small screens */}
+                  <h4 className="font-medium text-gray-700 text-lg">💎 Manage Featured Gemstones</h4>
                   <div className="grid gap-4">
-                    <div className="border rounded-lg p-4 flex justify-between items-center">
+                    {/* Gemstone Card 1 */}
+                    <div className="border rounded-lg p-4 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-2"> {/* Changed to flex-col on mobile, flex-row on sm */}
                       <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                          <Gem className="h-6 w-6 text-blue-600" />
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0"> {/* flex-shrink-0 to prevent icon from shrinking */}
+                          <Gem className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" /> {/* Adjusted icon size */}
                         </div>
                         <div>
-                          <h5 className="font-medium">Premium Blue Sapphire</h5>
-                          <p className="text-sm text-gray-600">GemsBiz Supplier • $2,400 per carat</p>
+                          <h5 className="font-medium text-base sm:text-lg leading-tight">Premium Blue Sapphire</h5> {/* Adjusted font size and line height */}
+                          <p className="text-xs sm:text-sm text-gray-600 leading-tight">GemsBiz Supplier • $2,400 per carat</p> {/* Adjusted font size and line height */}
                         </div>
                       </div>
-                      <div className="flex gap-2">
-                        <Button variant="outline" size="sm">
+                      {/* Buttons Container: */}
+                      {/* flex flex-col: Stack buttons vertically on smallest screens */}
+                      {/* xs:flex-row: Arrange buttons horizontally from 'xs' breakpoint (if defined), or sm:flex-row */}
+                      {/* w-full: Make button container take full width when stacked */}
+                      {/* sm:w-auto: Revert to auto width on larger screens */}
+                      <div className="flex flex-col xs:flex-row gap-2 w-full sm:w-auto">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="w-full xs:w-auto whitespace-nowrap text-sm px-3 py-1.5"
+                        >
                           <Pencil className="h-4 w-4 mr-1" />
                           Edit
                         </Button>
-                        <Button variant="destructive" size="sm">
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          className="w-full xs:w-auto whitespace-nowrap text-sm px-3 py-1.5"
+                        >
                           <Trash2 className="h-4 w-4 mr-1" />
                           Delete
                         </Button>
                       </div>
                     </div>
-                    <div className="border rounded-lg p-4 flex justify-between items-center">
+
+                    {/* Gemstone Card 2 (apply same classes) */}
+                    <div className="border rounded-lg p-4 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-2">
                       <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                          <Gem className="h-6 w-6 text-green-600" />
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                          <Gem className="h-5 w-5 sm:h-6 sm:w-6 text-green-600" />
                         </div>
                         <div>
-                          <h5 className="font-medium">Colombian Emerald Collection</h5>
-                          <p className="text-sm text-gray-600">Elite Gems • $1,800 per carat</p>
+                          <h5 className="font-medium text-base sm:text-lg leading-tight">Colombian Emerald Collection</h5>
+                          <p className="text-xs sm:text-sm text-gray-600 leading-tight">Elite Gems • $1,800 per carat</p>
                         </div>
                       </div>
-                      <div className="flex gap-2">
-                        <Button variant="outline" size="sm">
+                      <div className="flex flex-col xs:flex-row gap-2 w-full sm:w-auto">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="w-full xs:w-auto whitespace-nowrap text-sm px-3 py-1.5"
+                        >
                           <Pencil className="h-4 w-4 mr-1" />
                           Edit
                         </Button>
-                        <Button variant="destructive" size="sm">
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          className="w-full xs:w-auto whitespace-nowrap text-sm px-3 py-1.5"
+                        >
                           <Trash2 className="h-4 w-4 mr-1" />
                           Delete
                         </Button>
@@ -1540,10 +1671,17 @@ export default function AdminDashboard() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <h3 className="text-lg font-semibold">Marketplace Listings</h3>
-                  <Button>
-                    <Plus className="h-4 w-4 mr-2" />
+
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6"> {/* Key changes for responsiveness */}
+                  {/* Heading: Responsive font size */}
+                  <h3 className="text-xl sm:text-2xl font-semibold text-neutral-800 text-center sm:text-left w-full sm:w-auto"> {/* Added w-full for stacking, text alignment */}
+                    Marketplace Listings
+                  </h3>
+                  {/* Button: Responsive width and text wrapping */}
+                  <Button
+                    className="w-full sm:w-auto whitespace-normal h-auto py-2 px-4 text-sm" // Ensure button takes full width when stacked
+                  >
+                    <Plus className="h-4 w-4 mr-2 sm:mr-1 lg:mr-2" /> {/* Adjusted margin for icon on smaller screens */}
                     Create New Listing
                   </Button>
                 </div>
@@ -1568,7 +1706,7 @@ export default function AdminDashboard() {
                   </div>
                   <Button>Create Listing</Button>
                 </div>
-                
+
                 {/* Existing Marketplace Listings Management */}
                 <div className="space-y-4 mt-8">
                   <h4 className="font-medium text-gray-700">🛍️ Manage Marketplace Listings</h4>
@@ -1621,31 +1759,59 @@ export default function AdminDashboard() {
             </CardHeader>
             <CardContent>
               <div className="space-y-6">
-                <div className="flex justify-between items-center">
-                  <h3 className="text-lg font-semibold">Featured Work Gallery</h3>
-                  <Button>
-                    <Plus className="h-4 w-4 mr-2" />
+
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6"> {/* Key changes for responsiveness */}
+                  {/* Heading: Responsive font size */}
+                  <h3 className="text-xl sm:text-2xl font-semibold text-neutral-800 text-center sm:text-left w-full sm:w-auto"> {/* Added w-full for stacking, text alignment */}
+                    Featured Work Gallery
+                  </h3>
+                  {/* Button: Responsive width and text wrapping */}
+                  <Button
+                    className="w-full sm:w-auto whitespace-normal h-auto py-2 px-4 text-sm" // Ensure button takes full width when stacked
+                  >
+                    <Plus className="h-4 w-4 mr-2 sm:mr-1 lg:mr-2" /> {/* Adjusted margin for icon on smaller screens */}
                     Upload Featured Work
                   </Button>
                 </div>
-                
-                {/* Import Images from Website */}
-                <div className="border-2 border-dashed border-green-200 rounded-lg p-6 bg-green-50">
-                  <h4 className="font-medium mb-4 text-green-700">🖼️ Import Images from Website</h4>
-                  <div className="space-y-4">
+
+                {/* Import Images from Website Section */}
+                <div className="border-2 border-dashed border-green-200 rounded-lg p-4 sm:p-6 bg-green-50"> {/* Adjusted padding for mobile */}
+                  <h4 className="font-medium mb-3 text-green-700 text-base sm:text-lg">🖼️ Import Images from Website</h4> {/* Adjusted margin and font size */}
+                  <div className="space-y-3 sm:space-y-4"> {/* Adjusted vertical spacing */}
                     <div>
-                      <Label htmlFor="image-import-url">Website or Image URL</Label>
-                      <Input 
-                        id="image-import-url" 
-                        placeholder="https://example.com/jewelry-images or direct image URL" 
-                        className="mt-1" 
+                      <Label htmlFor="image-import-url" className="text-sm">Website or Image URL</Label> {/* Added text-sm for label */}
+                      <Input
+                        id="image-import-url"
+                        placeholder="https://example.com/jewelry-images or direct image URL"
+                        className="mt-1 text-sm sm:text-base" // Adjusted font size for input
                       />
                     </div>
-                    <div className="flex gap-2">
-                      <Button variant="outline" className="flex-1">
+                    {/* Button Container: */}
+                    {/* flex flex-col: Stack buttons vertically on smallest screens */}
+                    {/* sm:flex-row: Arrange buttons horizontally from 'sm' breakpoint */}
+                    {/* gap-2: Consistent spacing between buttons */}
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <Button
+                        variant="outline"
+                        // w-full: Make button take full width when stacked (on flex-col)
+                        // sm:flex-1: Make button take equal available width when in a row (on sm:flex-row)
+                        // CRITICAL: Allow text to wrap if necessary (e.g., if content pushes button to be very narrow)
+                        // h-auto py-2: Adjust height if text wraps, ensure good vertical padding
+                        className="w-full sm:flex-1 whitespace-normal h-auto py-2 text-sm sm:text-base"
+                      // Add your onClick logic here
+                      // onClick={() => { /* ... */ }}
+                      >
                         🔍 Scan for Images
                       </Button>
-                      <Button className="flex-1">
+                      <Button
+                        // w-full: Make button take full width when stacked (on flex-col)
+                        // sm:flex-1: Make button take equal available width when in a row (on sm:flex-row)
+                        // CRITICAL: Allow text to wrap if necessary
+                        // h-auto py-2: Adjust height if text wraps, ensure good vertical padding
+                        className="w-full sm:flex-1 whitespace-normal h-auto py-2 text-sm sm:text-base"
+                      // Add your onClick logic here
+                      // onClick={() => { /* ... */ }}
+                      >
                         📥 Import Images
                       </Button>
                     </div>
@@ -1668,21 +1834,21 @@ export default function AdminDashboard() {
                 {/* Homepage Content Management */}
                 <div className="space-y-4 mt-6">
                   <h3 className="text-lg font-semibold">Homepage Content</h3>
-                  
+
                   {/* Import Homepage Content */}
                   <div className="border-2 border-dashed border-purple-200 rounded-lg p-4 bg-purple-50">
                     <h4 className="font-medium mb-3 text-purple-700">🏠 Import Homepage Content</h4>
                     <div className="space-y-3">
-                      <Input 
-                        placeholder="Import content from website URL" 
-                        className="text-sm" 
+                      <Input
+                        placeholder="Import content from website URL"
+                        className="text-sm"
                       />
                       <Button variant="outline" size="sm" className="w-full">
                         📥 Import Content
                       </Button>
                     </div>
                   </div>
-                  
+
                   <div className="border rounded-lg p-4">
                     <Label htmlFor="hero-title">Hero Section Title</Label>
                     <Input id="hero-title" placeholder="Main headline" className="mt-1" />
@@ -1720,20 +1886,47 @@ export default function AdminDashboard() {
                 </div>
 
                 {/* Bulk Content Management */}
-                <div className="space-y-4 mt-8 p-4 bg-red-50 border border-red-200 rounded-lg">
-                  <h4 className="font-medium text-red-700">⚠️ Bulk Content Management</h4>
-                  <p className="text-sm text-red-600">Use these tools carefully - bulk deletions cannot be undone!</p>
-                  <div className="grid grid-cols-2 gap-3">
-                    <Button variant="destructive" size="sm">
+                <div className="space-y-3 mt-6 p-4 sm:p-6 bg-red-50 border border-red-200 rounded-lg"> {/* Adjusted padding and spacing */}
+                  <h4 className="font-medium text-red-700 text-base sm:text-lg">⚠️ Bulk Content Management</h4> {/* Adjusted font size */}
+                  <p className="text-xs sm:text-sm text-red-600">Use these tools carefully - bulk deletions cannot be undone!</p> {/* Adjusted font size */}
+
+                  {/* Buttons Grid Container: */}
+                  {/* grid grid-cols-1: Stack buttons in a single column on smallest screens */}
+                  {/* xs:grid-cols-2: On 'xs' breakpoint (e.g., 475px), try for 2 columns. Adjust if you don't have xs. */}
+                  {/* md:grid-cols-2 (or md:grid-cols-3/4 if content fits well): On larger screens, maintain 2 columns or expand. */}
+                  {/* gap-2 sm:gap-3: Responsive gap between buttons. */}
+                  <div className="grid grid-cols-1 xs:grid-cols-2 gap-2 sm:gap-3">
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      // CRITICAL: Allow text to wrap and adjust height
+                      className="w-full h-auto py-2 text-sm whitespace-normal text-center"
+                    // Add onClick handler here if applicable
+                    >
                       🗑️ Delete All Articles
                     </Button>
-                    <Button variant="destructive" size="sm">
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      className="w-full h-auto py-2 text-sm whitespace-normal text-center"
+                    // Add onClick handler here if applicable
+                    >
                       🗑️ Delete All Featured Work
                     </Button>
-                    <Button variant="destructive" size="sm">
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      className="w-full h-auto py-2 text-sm whitespace-normal text-center"
+                    // Add onClick handler here if applicable
+                    >
                       🗑️ Delete All Gemstones
                     </Button>
-                    <Button variant="destructive" size="sm">
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      className="w-full h-auto py-2 text-sm whitespace-normal text-center"
+                    // Add onClick handler here if applicable
+                    >
                       🗑️ Delete All Marketplace
                     </Button>
                   </div>
