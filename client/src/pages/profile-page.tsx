@@ -2,7 +2,12 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useRoute, Link } from "wouter";
 import { Helmet } from "react-helmet";
-import { User, Connection, ProfilePhoto } from "@shared/schema";
+import { User as BaseUser, Connection, ProfilePhoto } from "@shared/schema";
+
+// Extend User type to include optional resume property
+type User = BaseUser & {
+  resume?: string;
+};
 import { useAuth } from "@/hooks/use-auth";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import tobeOfficialLogo from "../assets/tobe-official-logo.svg";
@@ -69,7 +74,8 @@ export default function ProfilePage() {
     facebook: "",
     pinterest: "",
     logoImage: "",
-    coverImage: ""
+    coverImage: "",
+    resume:'',
   });
   const [photoFormData, setPhotoFormData] = useState({
     photoUrl: '',
@@ -247,7 +253,8 @@ console.log("Profile ID from URL:", profileId);
         facebook: profile.facebook || "",
         pinterest: profile.pinterest || "",
         logoImage: profile.logoImage || "",
-        coverImage: profile.coverImage || ""
+        coverImage: profile.coverImage || "",
+        resume: profile.resume || ""
       });
     }
   }, [profile, isOwnProfile]);
@@ -1320,11 +1327,16 @@ console.log("Profile ID from URL:", profileId);
     );
   }
 
-  function handleSaveProfile(updatedProfile: typeof profileFormData): void {
+  function handleSaveProfile(updatedProfile: FormData): void {
+    // Convert FormData to a plain object
+    const obj: Record<string, string> = {};
+    updatedProfile.forEach((value, key) => {
+      obj[key] = value as string;
+    });
     // Update the local form state with the new profile data
-    setProfileFormData(updatedProfile);
+    setProfileFormData(obj as typeof profileFormData);
     // Trigger the mutation to update the profile on the server
-    updateProfileMutation.mutate(updatedProfile);
+    updateProfileMutation.mutate(obj as typeof profileFormData);
   }
   // Regular profile for other users
   return (
@@ -1587,66 +1599,170 @@ console.log("Profile ID from URL:", profileId);
 
                 <div>
                   <Card>
-                    <CardContent className="p-6">
-                      <h2 className="text-2xl font-serif font-bold mb-4">Details</h2>
-                      <div className="space-y-4">
-                        {profile.company && (
-                          <div>
-                            <h3 className="text-sm font-medium text-neutral-500">Company</h3>
-                            <p className="text-neutral-800">{profile.company}</p>
-                          </div>
-                        )}
-                        <div>
-                          <h3 className="text-sm font-medium text-neutral-500">Member Since</h3>
-                          <p className="text-neutral-800">
-                            {profile.createdAt
-                              ? new Date(profile.createdAt).toLocaleDateString('en-US', {
-                                month: 'long',
-                                year: 'numeric'
-                              })
-                              : 'Unknown'
-                            }
-                          </p>
-                        </div>
+                    <CardContent className="p-6"> {/* p-6 provides universal padding */}
+      <h2 className="text-2xl font-serif font-bold mb-4">Details</h2> {/* mb-4 provides universal margin-bottom */}
+      <div className="space-y-4"> {/* space-y-4 ensures vertical spacing between child elements */}
+        {profile.fullName && (
+          <div>
+            <h3 className="text-sm font-medium text-neutral-500">Name</h3>
+            <p className="text-neutral-800 break-words">{profile.fullName}</p> {/* break-words for long names */}
+          </div>
+        )}
+        {profile.company && (
+          <div>
+            <h3 className="text-sm font-medium text-neutral-500">Company</h3>
+            <p className="text-neutral-800 break-words">{profile.company}</p> {/* break-words for long company names */}
+          </div>
+        )}
+        {profile.bio && (
+          <div>
+            <h3 className="text-sm font-medium text-neutral-500">Bio</h3>
+            <p className="text-neutral-800 break-words">{profile.bio}</p> {/* break-words for long bios */}
+          </div>
+        )}
+        {profile.location && (
+          <div>
+            <h3 className="text-sm font-medium text-neutral-500">Location</h3>
+            <p className="text-neutral-800 break-words">{profile.location}</p> {/* break-words for long locations */}
+          </div>
+        )}
+        {profile.headquarters && (
+          <div>
+            <h3 className="text-sm font-medium text-neutral-500">Address</h3>
+            <p className="text-neutral-800 break-words">{profile.headquarters}</p> {/* break-words for long addresses */}
+          </div>
+        )}
+        {profile.website && (
+          <div>
+            <h3 className="text-sm font-medium text-neutral-500">Website</h3>
+            <p className="text-neutral-800 break-words">
+              <a href={profile.website} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                {profile.website}
+              </a>
+            </p> {/* Add a link and make it clickable */}
+          </div>
+        )}
+        {profile.phone && (
+          <div>
+            <h3 className="text-sm font-medium text-neutral-500">Phone</h3>
+            <p className="text-neutral-800 break-words">
+              <a href={`tel:${profile.phone}`} className="text-blue-600 hover:underline">
+                {profile.phone}
+              </a>
+            </p> {/* Add a callable link */}
+          </div>
+        )}
+        {profile.instagram && (
+          <div>
+            <h3 className="text-sm font-medium text-neutral-500">Instagram</h3>
+            <p className="text-neutral-800 break-words">
+              <a
+                href={`https://instagram.com/${profile.instagram}`} // Assuming profile.instagram is just the username
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:underline"
+              >
+                @{profile.instagram}
+              </a>
+            </p>
+          </div>
+        )}
+        {profile.facebook && (
+          <div>
+            <h3 className="text-sm font-medium text-neutral-500">Facebook</h3>
+            <p className="text-neutral-800 break-words">
+              <a
+                href={profile.facebook.startsWith('http') ? profile.facebook : `https://facebook.com/${profile.facebook}`} // Basic check for full URL
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:underline"
+              >
+                {profile.facebook}
+              </a>
+            </p>
+          </div>
+        )}
+        {profile.pinterest && (
+          <div>
+            <h3 className="text-sm font-medium text-neutral-500">Pinterest</h3>
+            <p className="text-neutral-800 break-words">
+              <a
+                href={profile.pinterest.startsWith('http') ? profile.pinterest : `https://pinterest.com/${profile.pinterest}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:underline"
+              >
+                {profile.pinterest}
+              </a>
+            </p>
+          </div>
+        )}
+        {profile.resume && (
+          <div>
+            <h3 className="text-sm font-medium text-neutral-500">Resume</h3>
+            <p className="text-neutral-800 break-words">
+              {/* This assumes profile.resume is a direct URL to the resume file */}
+              <a
+                href={profile.resume}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:underline"
+              >
+                View Resume
+              </a>
+            </p>
+          </div>
+        )}
+        <div>
+          <h3 className="text-sm font-medium text-neutral-500">Member Since</h3>
+          <p className="text-neutral-800">
+            {profile.createdAt
+              ? new Date(profile.createdAt).toLocaleDateString('en-US', {
+                  month: 'long',
+                  year: 'numeric'
+                })
+              : 'Unknown'
+            }
+          </p>
+        </div>
 
+        {/* Add Edit Profile Button for own profile */}
+        {isOwnProfile && (
+          <div className="mt-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleEditProfileClick}
+              className="flex items-center gap-2 w-full sm:w-auto" // w-full on small screens, auto width on larger
+            >
+              <Pencil size={16} />
+              Edit Profile
+            </Button>
+          </div>
+        )}
 
-                        {/* Add Edit Profile Button for own profile */}
-                        {isOwnProfile && (
-                          <div className="mt-4">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={handleEditProfileClick}
-                              className="flex items-center gap-2"
-                            >
-                              <Pencil size={16} />
-                              Edit Profile
-                            </Button>
-                          </div>
-                        )}
-
-                        {/* Only show categories section for To Be Packing */}
-                        {(profile.id === 1 || (profile.id === 5 && profile.fullName === "To Be Packing")) && (
-                          <div>
-                            <h3 className="text-sm font-medium text-neutral-500">Categories</h3>
-                            <div className="mt-1 flex flex-wrap gap-2">
-                              <div
-                                onClick={() => window.location.href = "/directory?category=packaging"}
-                                className="inline-block"
-                              >
-                                <Badge variant="outline" className="bg-neutral-100 cursor-pointer hover:bg-neutral-200">Packaging</Badge>
-                              </div>
-                              <div
-                                onClick={() => window.location.href = "/directory?category=displays"}
-                                className="inline-block"
-                              >
-                                <Badge variant="outline" className="bg-neutral-100 cursor-pointer hover:bg-neutral-200">Displays</Badge>
-                              </div>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </CardContent>
+        {/* Only show categories section for To Be Packing */}
+        {(profile.id === 1 || (profile.id === 5 && profile.fullName === "To Be Packing")) && (
+          <div>
+            <h3 className="text-sm font-medium text-neutral-500">Categories</h3>
+            <div className="mt-1 flex flex-wrap gap-2"> {/* flex-wrap ensures badges wrap to next line on small screens */}
+              <div
+                onClick={() => window.location.href = "/directory?category=packaging"}
+                className="inline-block" // inline-block helps maintain proper spacing with flex-wrap
+              >
+                <Badge variant="outline" className="bg-neutral-100 cursor-pointer hover:bg-neutral-200">Packaging</Badge>
+              </div>
+              <div
+                onClick={() => window.location.href = "/directory?category=displays"}
+                className="inline-block"
+              >
+                <Badge variant="outline" className="bg-neutral-100 cursor-pointer hover:bg-neutral-200">Displays</Badge>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </CardContent>
                   </Card>
                 </div>
               </div>
@@ -1851,19 +1967,19 @@ console.log("Profile ID from URL:", profileId);
           </Tabs>
         </div>
         {/* Fixed floating back button at the bottom of the page */}
-        <div className="fixed bottom-6 right-6 z-50">
-          <Button
-            variant="outline"
-            size="default"
-            onClick={() => window.history.back()}
-            className="flex items-center gap-2 rounded-full bg-white shadow-lg border-2 border-secondary px-4 py-2 hover:bg-secondary/10"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-secondary">
-              <path d="m15 18-6-6 6-6" />
-            </svg>
-            <span className="font-medium text-secondary">Back</span>
-          </Button>
-        </div>
+<div className="fixed bottom-6 right-6 z-50 sm:hidden">
+  <Button
+    variant="outline"
+    size="default"
+    onClick={() => window.history.back()}
+    className="flex items-center gap-2 rounded-full bg-white shadow-lg border-2 border-secondary px-4 py-2 hover:bg-secondary/10"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-secondary">
+      <path d="m15 18-6-6 6-6" />
+    </svg>
+    <span className="font-medium text-secondary">Back</span>
+  </Button>
+</div>
       </main>
 
       <Footer />
