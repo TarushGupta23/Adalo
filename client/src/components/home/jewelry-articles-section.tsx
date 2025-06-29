@@ -519,67 +519,35 @@ const JewelryArticlesSection = () => {
           });
 
   return (
-    <section className="py-20 bg-neutral-50" style={{ 
-      animation: 'none !important',
-      transition: 'none !important',
-      transform: 'none !important'
-    }}>
-      <div className="container mx-auto px-4" style={{ 
-        animation: 'none !important',
-        transition: 'none !important',
-        transform: 'none !important'
-      }}>
-        <div style={{ 
-          textAlign: 'center', 
-          marginBottom: '3rem',
-          isolation: 'isolate',
-          containment: 'layout style paint',
-          willChange: 'auto'
-        }}>
-          <h2 style={{ 
-            fontSize: '36px',
-            fontWeight: '700',
-            color: 'rgb(38, 38, 38)',
-            marginBottom: '16px',
-            fontFamily: 'Georgia, Times, serif',
-            lineHeight: '1.2',
-            letterSpacing: 'normal',
-            textRendering: 'optimizeLegibility',
-            WebkitFontSmoothing: 'antialiased',
-            MozOsxFontSmoothing: 'grayscale'
-          }}>
+    <section className="py-12 md:py-20 bg-neutral-50"> {/* Responsive vertical padding */}
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8"> {/* Responsive horizontal padding */}
+        {/* Section Heading */}
+        <div className="text-center mb-10 md:mb-16"> {/* Responsive bottom margin */}
+          <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-neutral-800 mb-4 md:mb-6 leading-tight"> {/* Responsive font sizes, line height */}
             Industry Articles & Insights
           </h2>
-          <p style={{ 
-            color: 'rgb(82, 82, 82)',
-            maxWidth: '672px',
-            margin: '0 auto',
-            fontFamily: 'system-ui, -apple-system, sans-serif',
-            fontSize: '16px',
-            lineHeight: '1.5',
-            textRendering: 'optimizeLegibility',
-            WebkitFontSmoothing: 'antialiased',
-            MozOsxFontSmoothing: 'grayscale'
-          }}>
+          <p className="font-sans text-base sm:text-lg text-neutral-600 max-w-3xl mx-auto"> {/* Responsive font sizes, max width, centering */}
             Stay updated with the latest trends, news, and insights from your favorite jewelry publications and newsletters.
           </p>
         </div>
 
-        <div className="mb-14">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="font-serif text-2xl font-semibold text-neutral-800">Magazine Articles</h3>
-            <div className="flex gap-2">
+        {/* Magazine Articles Section */}
+        <div className="mb-10 md:mb-14"> {/* Responsive bottom margin */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4"> {/* Stack on small, row on sm+ */}
+            <h3 className="font-serif text-xl sm:text-2xl font-semibold text-neutral-800">Magazine Articles</h3> {/* Responsive font size */}
+            {/* Publication Filter Buttons - Using flex-wrap for responsiveness */}
+            <div className="flex flex-wrap justify-center sm:justify-end gap-2"> {/* Wrap buttons, justify right on sm+ */}
               {publications.filter(p => p.category === 'magazine').map((publication) => (
-                <Button 
+                <Button
                   key={publication.id}
-                  variant="outline" 
-                  size="sm" 
-                  className="inline-flex items-center gap-2 rounded-full"
+                  variant="outline"
+                  size="sm"
+                  className="inline-flex items-center gap-2 rounded-full flex-shrink-0" // flex-shrink-0 prevents buttons from shrinking
                   onClick={() => handleToggleFavorite(publication.id)}
                 >
-                  <img 
-                    src={publication.logo} 
-                    alt={publication.name} 
+                  <img
+                    src={publication.logo}
+                    alt={publication.name}
                     className="h-4 object-contain"
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
@@ -595,8 +563,9 @@ const JewelryArticlesSection = () => {
               ))}
             </div>
           </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+          {/* Magazine Article Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"> {/* Responsive grid layout */}
             {articles.filter(article => {
               const pub = publications.find(p => p.id === article.publicationId);
               return pub && pub.category === 'magazine';
@@ -605,10 +574,10 @@ const JewelryArticlesSection = () => {
               return (
                 <Card key={article.id} className="bg-white overflow-hidden">
                   <div className="h-48 overflow-hidden cursor-pointer" onClick={() => handleOpenArticle(article)}>
-                    <img 
-                      src={article.image} 
-                      alt={article.title} 
-                      className="w-full h-full object-cover"
+                    <img
+                      src={article.image}
+                      alt={article.title}
+                      className="w-full h-full object-cover" // Ensures image scales responsively
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
                         target.src = "https://via.placeholder.com/300x200?text=Article+Image";
@@ -616,46 +585,50 @@ const JewelryArticlesSection = () => {
                     />
                   </div>
                   <CardContent className="p-6">
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center">
-                        <img 
-                          src={publication?.logo} 
-                          alt={publication?.name} 
+                    <div className="flex items-center justify-between mb-3 flex-wrap gap-2"> {/* flex-wrap for spacing on small screens */}
+                      <div className="flex items-center flex-shrink-0">
+                        <img
+                          src={publication?.logo}
+                          alt={publication?.name}
                           className="h-5 object-contain mr-2"
                           onError={(e) => {
                             const target = e.target as HTMLImageElement;
                             target.src = "https://via.placeholder.com/80x30?text=Logo";
                           }}
                         />
-                        <a 
-                          href={publication?.url} 
-                          target="_blank" 
-                          rel="noopener noreferrer" 
+                        <a
+                          href={publication?.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
                           className="text-sm font-medium text-primary hover:underline"
                           onClick={(e) => e.stopPropagation()}
                         >
                           {publication?.name}
                         </a>
                       </div>
-                      <span className="text-xs text-neutral-500">{new Date(article.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
+                      <span className="text-xs text-neutral-500 flex-shrink-0">{new Date(article.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
                     </div>
                     <div className="cursor-pointer" onClick={() => handleOpenArticle(article)}>
-                      <h4 className="font-serif text-lg font-semibold text-neutral-800 mb-2 line-clamp-2">{article.title}</h4>
-                      <p className="text-neutral-600 text-sm mb-4 line-clamp-3">{article.summary}</p>
+                      <h4 className="font-serif text-lg font-semibold text-neutral-800 mb-2 line-clamp-2">
+                        {article.title}
+                      </h4>
+                      <p className="text-neutral-600 text-sm mb-4 line-clamp-3">
+                        {article.summary}
+                      </p>
                     </div>
-                    <div className="flex justify-between items-center">
-                      <Button 
-                        variant="secondary" 
-                        size="sm" 
-                        className="text-sm"
+                    <div className="flex flex-col sm:flex-row justify-between items-center gap-3 mt-4"> {/* Stack buttons on small, row on sm+ */}
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        className="text-sm w-full sm:w-auto" // Full width on small, auto on sm+
                         onClick={() => handleOpenArticle(article)}
                       >
                         Read In App
                       </Button>
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        className="text-sm"
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="text-sm w-full sm:w-auto" // Full width on small, auto on sm+
                         asChild
                       >
                         <a href={publication?.url} target="_blank" rel="noopener noreferrer">
@@ -670,16 +643,18 @@ const JewelryArticlesSection = () => {
           </div>
         </div>
 
-        <div className="mb-10">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="font-serif text-2xl font-semibold text-neutral-800">My Newsletters</h3>
-            <div className="flex gap-2">
+        {/* My Newsletters Section */}
+        <div className="mb-10"> {/* Responsive bottom margin */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4"> {/* Stack on small, row on sm+ */}
+            <h3 className="font-serif text-xl sm:text-2xl font-semibold text-neutral-800">My Newsletters</h3> {/* Responsive font size */}
+            {/* Newsletter Filter Buttons - Using flex-wrap for responsiveness */}
+            <div className="flex flex-wrap justify-center sm:justify-end gap-2"> {/* Wrap buttons, justify right on sm+ */}
               {publications.filter(p => p.category === 'substack').map((publication) => (
-                <Button 
+                <Button
                   key={publication.id}
-                  variant="outline" 
-                  size="sm" 
-                  className="inline-flex items-center gap-2 rounded-full"
+                  variant="outline"
+                  size="sm"
+                  className="inline-flex items-center gap-2 rounded-full flex-shrink-0" // flex-shrink-0 prevents buttons from shrinking
                   onClick={() => handleToggleFavorite(publication.id)}
                 >
                   <span className="text-sm font-medium">{publication.name}</span>
@@ -692,8 +667,9 @@ const JewelryArticlesSection = () => {
               ))}
             </div>
           </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+          {/* Newsletter Article Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6"> {/* Responsive grid layout */}
             {articles.filter(article => {
               const pub = publications.find(p => p.id === article.publicationId);
               return pub && pub.category === 'substack';
@@ -702,20 +678,24 @@ const JewelryArticlesSection = () => {
               return (
                 <Card key={article.id} className="bg-white overflow-hidden">
                   <CardContent className="p-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center">
+                    <div className="flex items-center justify-between mb-4 flex-wrap gap-2"> {/* flex-wrap for spacing on small screens */}
+                      <div className="flex items-center flex-shrink-0">
                         <BookOpen className="h-5 w-5 text-primary mr-2" />
                         <span className="text-sm font-medium text-primary">{publication?.name}</span>
                       </div>
-                      <span className="text-xs text-neutral-500">{new Date(article.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
+                      <span className="text-xs text-neutral-500 flex-shrink-0">{new Date(article.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
                     </div>
                     <div className="cursor-pointer" onClick={() => handleOpenArticle(article)}>
-                      <h4 className="font-serif text-xl font-semibold text-neutral-800 mb-3">{article.title}</h4>
-                      <p className="text-neutral-600 text-sm mb-5">{article.summary}</p>
+                      <h4 className="font-serif text-lg sm:text-xl font-semibold text-neutral-800 mb-3 line-clamp-2"> {/* Responsive font size */}
+                        {article.title}
+                      </h4>
+                      <p className="text-neutral-600 text-sm mb-5 line-clamp-3">
+                        {article.summary}
+                      </p>
                     </div>
-                    <Button 
-                      variant="default" 
-                      className="w-full"
+                    <Button
+                      variant="default"
+                      className="w-full" // Always full width for this button
                       onClick={() => handleOpenArticle(article)}
                     >
                       Read Full Newsletter
@@ -727,14 +707,14 @@ const JewelryArticlesSection = () => {
           </div>
           {favorites.length > 0 && (
             <div className="bg-white p-6 rounded-lg border border-neutral-200 mt-10">
-              <h4 className="font-serif text-xl font-semibold text-neutral-800 mb-4">My Favorite Sources</h4>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <h4 className="font-serif text-xl sm:text-2xl font-semibold text-neutral-800 mb-4">My Favorite Sources</h4> {/* Responsive font size */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4"> {/* Responsive grid */}
                 {publications.filter(pub => favorites.includes(pub.id)).map((publication) => (
-                  <div key={publication.id} className="flex flex-col items-center p-4 bg-neutral-50 rounded-lg border border-neutral-100">
-                    <div className="h-8 mb-3 flex items-center">
-                      <img 
-                        src={publication.logo} 
-                        alt={publication.name} 
+                  <div key={publication.id} className="flex flex-col items-center p-4 bg-neutral-50 rounded-lg border border-neutral-100 text-center"> {/* Added text-center */}
+                    <div className="h-8 mb-3 flex items-center justify-center"> {/* Centered content in this div */}
+                      <img
+                        src={publication.logo}
+                        alt={publication.name}
                         className="h-full object-contain"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
@@ -759,33 +739,38 @@ const JewelryArticlesSection = () => {
           )}
         </div>
 
-        {/* Article Reading Dialog */}
+        {/* Article Reading Dialog - This typically handles its own responsiveness */}
+        {/* For the dialog content, max-w-4xl max-h-[90vh] overflow-y-auto p-0 are good starts.
+            You might need to adjust the DialogContent's default responsiveness from your shadcn/ui library
+            if it's not already mobile-friendly. */}
         <Dialog open={!!selectedArticle} onOpenChange={(open) => !open && handleCloseArticle()}>
           <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-0">
             {selectedArticle && (
               <>
-                <DialogHeader className="sticky top-0 bg-white z-10 p-6 border-b">
-                  <div className="flex items-center justify-between">
-                    <DialogTitle className="text-2xl font-serif">{selectedArticle.title}</DialogTitle>
-                    <Button variant="ghost" size="icon" onClick={handleShareArticle}>
+                <DialogHeader className="sticky top-0 bg-white z-10 p-4 sm:p-6 border-b"> {/* Responsive padding */}
+                  <div className="flex items-start justify-between flex-wrap gap-2"> {/* Added flex-wrap for title and share button */}
+                    <DialogTitle className="text-xl sm:text-2xl font-serif pr-8"> {/* Responsive font size, padding for share button */}
+                      {selectedArticle.title}
+                    </DialogTitle>
+                    <Button variant="ghost" size="icon" onClick={handleShareArticle} className="flex-shrink-0">
                       <Share2 className="h-5 w-5 text-neutral-500" />
                     </Button>
                   </div>
-                  <div className="flex justify-between items-center mt-2">
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-2 gap-2"> {/* Stack on small, row on sm+ */}
                     <div className="text-sm text-neutral-500">
-                      {publications.find(p => p.id === selectedArticle.publicationId)?.name} · 
-                      {new Date(selectedArticle.date).toLocaleDateString('en-US', { 
-                        year: 'numeric', 
-                        month: 'long', 
-                        day: 'numeric' 
+                      {publications.find(p => p.id === selectedArticle.publicationId)?.name} ·
+                      {new Date(selectedArticle.date).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
                       })}
                     </div>
-                    <Button variant="ghost" size="sm" onClick={handleCloseArticle}>
+                    <Button variant="ghost" size="sm" onClick={handleCloseArticle} className="flex-shrink-0">
                       Close
                     </Button>
                   </div>
                 </DialogHeader>
-                <div className="p-6 article-content prose prose-neutral max-w-none prose-headings:font-serif prose-headings:text-neutral-800 prose-p:text-neutral-700 prose-img:rounded-lg" 
+                <div className="p-4 sm:p-6 article-content prose prose-neutral max-w-none prose-headings:font-serif prose-headings:text-neutral-800 prose-p:text-neutral-700 prose-img:rounded-lg"
                   dangerouslySetInnerHTML={{ __html: selectedArticle.content }}
                 />
               </>
