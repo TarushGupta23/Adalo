@@ -41,11 +41,12 @@ type EditProfileDialogProps = {
     pinterest?: string;
     logoImage?: string;
     coverImage?: string;
+    resume?: string; // This will now typically be a URL to the resume
     createdAt?: string | Date; // Add createdAt to type, as it might be in 'profile'
     updatedAt?: string | Date; // Add updatedAt to type
     [key: string]: any; // Allow for other properties
   };
-  onSave: (updatedProfile: any) => void;
+  onSave: (updatedProfile: FormData) => void; // Change type to FormData
   // Pass the mutation status from parent if using react-query for saving
   updateProfileMutation?: UpdateProfileMutationStatus;
 };
@@ -72,7 +73,11 @@ export function EditProfileDialog({
     pinterest: '',
     logoImage: '',
     coverImage: '',
+    resume: '', 
   });
+
+  const [resumeFile, setResumeFile] = useState<File | null>(null);
+  const [currentResumeUrl, setCurrentResumeUrl] = useState<string>(''); // To display current resume URL if exists
 
   // Use useEffect to populate the form fields when the dialog opens or profile data changes
   useEffect(() => {
@@ -92,30 +97,46 @@ export function EditProfileDialog({
         pinterest: profile.pinterest || '',
         logoImage: profile.logoImage || '',
         coverImage: profile.coverImage || '',
+        resume: profile.resume || '', // Initialize resume field
       });
+      setCurrentResumeUrl(profile.resume || ''); // Set the current resume URL
+      setResumeFile(null); // Clear any previously selected file when profile changes
     }
   }, [profile]); // Re-run effect when the 'profile' prop changes
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setResumeFile(e.target.files[0]);
+    } else {
+      setResumeFile(null);
+    }
+  };
 
   const handleProfileSubmit = (e: React.FormEvent) => {
     e.preventDefault(); // Prevent default form submission
 
-    // Create the object to send to the backend.
-    // IMPORTANT: Exclude fields like 'createdAt' or 'updatedAt' that are
-    // managed by the database and should not be sent from the client.
-    const dataToSend = {
-      // It's good practice to send the ID for the update operation
-      id: profile.id,
-      ...profileFormData, // All your editable form fields
-      // Omit properties that your backend/ORM typically manages automatically
-      // like `createdAt`, `updatedAt`, or other system-generated fields.
-      // If you were including `profile` spread (`...profile`) previously,
-      // that might have included `createdAt` causing the `toISOString` error.
-      // By explicitly listing only editable fields, we avoid sending unwanted data.
-    };
+    const formData = new FormData();
+    formData.append('id', profile.id.toString()); // Always send ID for updates
 
-    onSave(dataToSend); // Call the onSave function passed from the parent
-    // The dialog closure is typically handled by onOpenChange called after the save
-    // or by the parent component (ProfilePage) reacting to the mutation success.
+    // Append all other form data fields
+    Object.entries(profileFormData).forEach(([key, value]) => {
+      formData.append(key, value);
+    });
+
+    // Append the resume file if it exists
+    if (resumeFile) {
+      formData.append('resume', resumeFile);
+    } else if (currentResumeUrl && !resumeFile) {
+      // If there's a current resume URL but no new file selected,
+      // you might want to send the existing URL or a flag to keep it.
+      // This depends on your backend's API. For simplicity, we'll
+      // assume if no new file, the backend keeps the old one unless explicitly told to remove it.
+      // Or you can send the current URL if your backend expects it.
+      formData.append('resumeUrl', currentResumeUrl); // Example: send current URL
+    }
+
+
+    onSave(formData); // Call the onSave function passed from the parent
   };
 
   return (
@@ -265,9 +286,9 @@ export function EditProfileDialog({
               </div>
             </div>
 
-            {/* Images */}
+            {/* Images and Resume */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Profile Images</h3>
+              <h3 className="text-lg font-semibold">Profile Images & Documents</h3>
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="logoImage">Logo/Avatar Image URL</Label>
@@ -286,6 +307,25 @@ export function EditProfileDialog({
                     onChange={(e) => setProfileFormData({ ...profileFormData, coverImage: e.target.value })}
                     placeholder="https://example.com/cover.jpg"
                   />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="resume">Resume (PDF, DOCX)</Label>
+                  <Input
+                    id="resume"
+                    type="file" // Changed to type "file"
+                    accept=".pdf,.doc,.docx" // Specify accepted file types
+                    onChange={handleFileChange}
+                  />
+                  {currentResumeUrl && (
+                    <p className="text-sm text-gray-500 mt-1">
+                      Current Resume: <a href={currentResumeUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">{currentResumeUrl.split('/').pop()}</a>
+                    </p>
+                  )}
+                  {resumeFile && (
+                    <p className="text-sm text-gray-500 mt-1">
+                      New File Selected: {resumeFile.name}
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
