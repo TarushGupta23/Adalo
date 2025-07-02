@@ -52,10 +52,10 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  Plus, 
-  Users, 
-  Code, 
+import {
+  Plus,
+  Users,
+  Code,
   Globe,
   Github,
   Linkedin,
@@ -121,31 +121,32 @@ export default function DeveloperManagement() {
     );
   }
 
+  // Add BACKEND_URL constant
+  const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:3000"; // Changed: Added BACKEND_URL from process.env
+
   // Fetch developers
   const { data: developers, isLoading: developersLoading } = useQuery({
     queryKey: ["/api/developers"],
     queryFn: async () => {
-      const response = await fetch("/api/developers");
+      const response = await fetch(`${BACKEND_URL}/api/developers`); // Changed: Prepended BACKEND_URL to the request URL
       if (!response.ok) throw new Error("Failed to fetch developers");
       return await response.json();
     }
   });
-
   // Fetch all users for the dropdown
   const { data: users } = useQuery({
     queryKey: ["/api/users"],
     queryFn: async () => {
-      const response = await fetch("/api/users");
+      const response = await fetch(`${BACKEND_URL}/api/users`); // Changed: Prepended BACKEND_URL to the request URL
       if (!response.ok) throw new Error("Failed to fetch users");
       return await response.json();
     }
   });
-
   // Fetch project assignments
   const { data: projects, isLoading: projectsLoading } = useQuery({
     queryKey: ["/api/project-assignments"],
     queryFn: async () => {
-      const response = await fetch("/api/project-assignments");
+      const response = await fetch(`${BACKEND_URL}/api/project-assignments`); // Changed: Prepended BACKEND_URL to the request URL
       if (!response.ok) throw new Error("Failed to fetch project assignments");
       return await response.json();
     }
@@ -172,10 +173,10 @@ export default function DeveloperManagement() {
   // Add developer mutation
   const addDeveloperMutation = useMutation({
     mutationFn: async (values: z.infer<typeof developerFormSchema>) => {
-      const skillsArray = typeof values.skills === 'string' 
+      const skillsArray = typeof values.skills === 'string'
         ? values.skills.split(',').map(s => s.trim()).filter(Boolean)
         : values.skills || [];
-      
+
       const res = await apiRequest("POST", "/api/developers", {
         ...values,
         skills: skillsArray,
@@ -306,7 +307,7 @@ export default function DeveloperManagement() {
                     Add a developer to your team with their role and access level.
                   </DialogDescription>
                 </DialogHeader>
-                
+
                 <Form {...developerForm}>
                   <form onSubmit={developerForm.handleSubmit((data) => addDeveloperMutation.mutate(data))} className="space-y-4">
                     <FormField
@@ -426,8 +427,8 @@ export default function DeveloperManagement() {
                         <FormItem>
                           <FormLabel>Skills (comma-separated)</FormLabel>
                           <FormControl>
-                            <Input 
-                              placeholder="React, Node.js, PostgreSQL, AWS" 
+                            <Input
+                              placeholder="React, Node.js, PostgreSQL, AWS"
                               {...field}
                               value={Array.isArray(field.value) ? field.value.join(', ') : field.value || ''}
                               onChange={(e) => field.onChange(e.target.value)}
@@ -495,7 +496,7 @@ export default function DeveloperManagement() {
                     Assign a project to one of your developers.
                   </DialogDescription>
                 </DialogHeader>
-                
+
                 <Form {...projectForm}>
                   <form onSubmit={projectForm.handleSubmit((data) => addProjectMutation.mutate(data))} className="space-y-4">
                     <FormField
@@ -583,9 +584,9 @@ export default function DeveloperManagement() {
                           <FormItem>
                             <FormLabel>Estimated Hours</FormLabel>
                             <FormControl>
-                              <Input 
-                                type="number" 
-                                placeholder="40" 
+                              <Input
+                                type="number"
+                                placeholder="40"
                                 {...field}
                                 onChange={(e) => field.onChange(parseInt(e.target.value) || undefined)}
                               />
@@ -715,7 +716,7 @@ export default function DeveloperManagement() {
                           <TableCell>
                             <div className="flex gap-2">
                               {dev.githubUsername && (
-                                <a 
+                                <a
                                   href={`https://github.com/${dev.githubUsername}`}
                                   target="_blank"
                                   rel="noopener noreferrer"
@@ -725,7 +726,7 @@ export default function DeveloperManagement() {
                                 </a>
                               )}
                               {dev.portfolioUrl && (
-                                <a 
+                                <a
                                   href={dev.portfolioUrl}
                                   target="_blank"
                                   rel="noopener noreferrer"
@@ -735,7 +736,7 @@ export default function DeveloperManagement() {
                                 </a>
                               )}
                               {dev.linkedinUrl && (
-                                <a 
+                                <a
                                   href={dev.linkedinUrl}
                                   target="_blank"
                                   rel="noopener noreferrer"
@@ -824,24 +825,24 @@ export default function DeveloperManagement() {
                             </div>
                           </TableCell>
                           <TableCell>
-                            <Badge 
+                            <Badge
                               className={
                                 project.status === 'completed' ? 'bg-green-100 text-green-800' :
-                                project.status === 'active' ? 'bg-blue-100 text-blue-800' :
-                                project.status === 'paused' ? 'bg-yellow-100 text-yellow-800' :
-                                'bg-red-100 text-red-800'
+                                  project.status === 'active' ? 'bg-blue-100 text-blue-800' :
+                                    project.status === 'paused' ? 'bg-yellow-100 text-yellow-800' :
+                                      'bg-red-100 text-red-800'
                               }
                             >
                               {project.status}
                             </Badge>
                           </TableCell>
                           <TableCell>
-                            <Badge 
+                            <Badge
                               className={
                                 project.priority === 'urgent' ? 'bg-red-100 text-red-800' :
-                                project.priority === 'high' ? 'bg-orange-100 text-orange-800' :
-                                project.priority === 'medium' ? 'bg-blue-100 text-blue-800' :
-                                'bg-gray-100 text-gray-800'
+                                  project.priority === 'high' ? 'bg-orange-100 text-orange-800' :
+                                    project.priority === 'medium' ? 'bg-blue-100 text-blue-800' :
+                                      'bg-gray-100 text-gray-800'
                               }
                             >
                               {project.priority}
@@ -852,10 +853,10 @@ export default function DeveloperManagement() {
                               <div className="text-sm">
                                 <div>{project.actualHours || 0}/{project.estimatedHours}h</div>
                                 <div className="w-20 bg-gray-200 rounded-full h-2 mt-1">
-                                  <div 
-                                    className="bg-primary h-2 rounded-full" 
-                                    style={{ 
-                                      width: `${Math.min(100, ((project.actualHours || 0) / project.estimatedHours) * 100)}%` 
+                                  <div
+                                    className="bg-primary h-2 rounded-full"
+                                    style={{
+                                      width: `${Math.min(100, ((project.actualHours || 0) / project.estimatedHours) * 100)}%`
                                     }}
                                   ></div>
                                 </div>

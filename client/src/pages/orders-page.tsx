@@ -34,7 +34,7 @@ interface OrderWithItems extends Order {
 export default function OrdersPage() {
   const [location, setLocation] = useLocation();
   const { user } = useAuth();
-  
+  const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:3000";
   // Fetch orders
   const { 
     data: orders, 
@@ -44,7 +44,7 @@ export default function OrdersPage() {
   } = useQuery<OrderWithItems[]>({
     queryKey: ['/api/orders'],
     queryFn: async () => {
-      const response = await fetch('/api/orders');
+      const response = await fetch(BACKEND_URL+'/api/orders');
       if (!response.ok) {
         throw new Error('Failed to fetch orders');
       }

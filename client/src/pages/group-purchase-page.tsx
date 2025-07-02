@@ -237,7 +237,8 @@ function GroupPurchasePage() {
       if (!user) return [];
       
       try {
-        const response = await fetch('/api/group-purchases/created');
+        const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:3000";
+        const response = await fetch(BACKEND_URL+'/api/group-purchases/created');
         if (!response.ok) {
           throw new Error("Failed to fetch your created group purchases");
         }
@@ -257,7 +258,8 @@ function GroupPurchasePage() {
       if (!user) return [];
       
       try {
-        const response = await fetch('/api/group-purchases/participating');
+        const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:3000";
+        const response = await fetch(BACKEND_URL+'/api/group-purchases/participating');
         if (!response.ok) {
           throw new Error("Failed to fetch your participating group purchases");
         }
@@ -277,7 +279,8 @@ function GroupPurchasePage() {
       if (!selectedGroupPurchase) return [];
       
       try {
-        const response = await fetch(`/api/group-purchases/${selectedGroupPurchase.id}/participants`);
+        const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:3000";
+        const response = await fetch(`${BACKEND_URL}/api/group-purchases/${selectedGroupPurchase.id}/participants`);
         if (!response.ok) {
           throw new Error("Failed to fetch participants");
         }

@@ -96,7 +96,8 @@ function JewelryMarketplace() {
       if (searchQuery) params.append("q", searchQuery);
 
       try {
-        const response = await fetch(`/api/marketplace?${params.toString()}`);
+        const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:3000";
+        const response = await fetch(`${BACKEND_URL}/api/marketplace?${params.toString()}`);
         if (!response.ok) {
           throw new Error("Failed to fetch marketplace listings");
         }
@@ -178,7 +179,8 @@ function JewelryMarketplace() {
       if (!user) return [];
       
       try {
-        const response = await fetch('/api/marketplace/my-listings');
+        const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:3000";
+        const response = await fetch(BACKEND_URL+'/api/marketplace/my-listings');
         if (!response.ok) {
           throw new Error("Failed to fetch your listings");
         }

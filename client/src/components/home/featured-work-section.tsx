@@ -3,10 +3,12 @@ import { Link } from "wouter";
 import { InventoryItem } from "@shared/schema";
 
 export default function FeaturedWorkSection() {
+  const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:3000"; // Changed: Added BACKEND_URL from process.env
+
   const { data: items, isLoading } = useQuery<InventoryItem[]>({
     queryKey: ["/api/inventory?featured=true"],
     queryFn: async () => {
-      const response = await fetch("/api/inventory?featured=true");
+      const response = await fetch(`${BACKEND_URL}/api/inventory?featured=true`); // Changed: Prepended BACKEND_URL to the request URL
       if (!response.ok) throw new Error("Failed to fetch featured work");
       return await response.json();
     }

@@ -14,7 +14,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { 
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -40,7 +40,7 @@ export default function CartPage() {
   const { toast } = useToast();
   const [location, setLocation] = useLocation();
   const { user } = useAuth();
-  
+
   // Form state for checkout
   const [shippingAddress, setShippingAddress] = useState("");
   const [shippingCity, setShippingCity] = useState("");
@@ -48,17 +48,20 @@ export default function CartPage() {
   const [shippingZip, setShippingZip] = useState("");
   const [shippingCountry, setShippingCountry] = useState("USA");
   const [paymentMethod, setPaymentMethod] = useState("credit_card");
-  
+
   // Fetch cart data
-  const { 
-    data: cart, 
+  // Add BACKEND_URL constant
+  const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:3000"; // Changed: Added BACKEND_URL from process.env
+
+  const {
+    data: cart,
     isLoading,
     isError,
     error,
   } = useQuery<CartWithItems>({
     queryKey: ['/api/cart'],
     queryFn: async () => {
-      const response = await fetch('/api/cart');
+      const response = await fetch(`${BACKEND_URL}/api/cart`); // Changed: Prepended BACKEND_URL to the request URL
       if (!response.ok) {
         throw new Error('Failed to fetch cart');
       }
@@ -66,7 +69,7 @@ export default function CartPage() {
     },
     enabled: !!user // Only fetch if user is logged in
   });
-  
+
   // Update cart item quantity
   const updateItemMutation = useMutation({
     mutationFn: async ({ itemId, quantity }: { itemId: number, quantity: number }) => {
@@ -87,7 +90,7 @@ export default function CartPage() {
       });
     }
   });
-  
+
   // Remove item from cart
   const removeItemMutation = useMutation({
     mutationFn: async (itemId: number) => {
@@ -108,7 +111,7 @@ export default function CartPage() {
       });
     }
   });
-  
+
   // Checkout mutation
   const checkoutMutation = useMutation({
     mutationFn: async (checkoutData: {
@@ -137,22 +140,22 @@ export default function CartPage() {
       });
     }
   });
-  
+
   // Handle quantity update
   const handleUpdateQuantity = (itemId: number, currentQuantity: number, change: number) => {
     const newQuantity = Math.max(1, currentQuantity + change);
     updateItemMutation.mutate({ itemId, quantity: newQuantity });
   };
-  
+
   // Handle item removal
   const handleRemoveItem = (itemId: number) => {
     removeItemMutation.mutate(itemId);
   };
-  
+
   // Handle checkout
   const handleCheckout = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!shippingAddress || !shippingCity || !shippingState || !shippingZip || !shippingCountry || !paymentMethod) {
       toast({
         title: "Missing Information",
@@ -161,7 +164,7 @@ export default function CartPage() {
       });
       return;
     }
-    
+
     checkoutMutation.mutate({
       shippingAddress,
       shippingCity,
@@ -171,17 +174,17 @@ export default function CartPage() {
       paymentMethod,
     });
   };
-  
+
   // Calculate subtotal
   const calculateSubtotal = () => {
     if (!cart?.items?.length) return 0;
-    
+
     return cart.items.reduce((total, item) => {
       const price = parseFloat(item.gemstone.price.toString());
       return total + (price * item.quantity);
     }, 0);
   };
-  
+
   // Format price
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -189,7 +192,7 @@ export default function CartPage() {
       currency: 'USD'
     }).format(price);
   };
-  
+
   if (!user) {
     return (
       <div className="container mx-auto py-16 px-4 text-center">
@@ -202,7 +205,7 @@ export default function CartPage() {
       </div>
     );
   }
-  
+
   if (isLoading) {
     return (
       <div className="container mx-auto py-8 px-4">
@@ -214,7 +217,7 @@ export default function CartPage() {
       </div>
     );
   }
-  
+
   if (isError) {
     return (
       <div className="container mx-auto py-8 px-4">
@@ -228,7 +231,7 @@ export default function CartPage() {
       </div>
     );
   }
-  
+
   // Empty cart state
   if (!cart?.items?.length) {
     return (
@@ -242,7 +245,7 @@ export default function CartPage() {
       </div>
     );
   }
-  
+
   return (
     <div className="container mx-auto py-8 px-4">
       <div className="flex items-center gap-2 mb-8">
@@ -253,9 +256,9 @@ export default function CartPage() {
           </Link>
         </Button>
       </div>
-      
+
       <h1 className="font-serif text-3xl font-bold mb-8 text-primary">Your Shopping Cart</h1>
-      
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Cart Items */}
         <div className="lg:col-span-2">
@@ -280,13 +283,13 @@ export default function CartPage() {
                     const gemstone = item.gemstone;
                     const itemPrice = parseFloat(gemstone.price.toString());
                     const itemTotal = itemPrice * item.quantity;
-                    
+
                     return (
                       <TableRow key={item.id}>
                         <TableCell>
-                          <img 
-                            src={gemstone.imageUrl} 
-                            alt={gemstone.name} 
+                          <img
+                            src={gemstone.imageUrl}
+                            alt={gemstone.name}
                             className="w-16 h-16 object-cover rounded-md"
                           />
                         </TableCell>
@@ -297,9 +300,9 @@ export default function CartPage() {
                         <TableCell>{formatPrice(itemPrice)}</TableCell>
                         <TableCell>
                           <div className="flex items-center">
-                            <Button 
-                              variant="outline" 
-                              size="icon" 
+                            <Button
+                              variant="outline"
+                              size="icon"
                               className="h-8 w-8 rounded-full"
                               onClick={() => handleUpdateQuantity(item.id, item.quantity, -1)}
                               disabled={item.quantity <= 1 || updateItemMutation.isPending}
@@ -307,9 +310,9 @@ export default function CartPage() {
                               <Minus className="h-3 w-3" />
                             </Button>
                             <span className="mx-2 w-8 text-center">{item.quantity}</span>
-                            <Button 
-                              variant="outline" 
-                              size="icon" 
+                            <Button
+                              variant="outline"
+                              size="icon"
                               className="h-8 w-8 rounded-full"
                               onClick={() => handleUpdateQuantity(item.id, item.quantity, 1)}
                               disabled={updateItemMutation.isPending}
@@ -320,9 +323,9 @@ export default function CartPage() {
                         </TableCell>
                         <TableCell className="text-right font-medium">{formatPrice(itemTotal)}</TableCell>
                         <TableCell>
-                          <Button 
-                            variant="ghost" 
-                            size="icon" 
+                          <Button
+                            variant="ghost"
+                            size="icon"
                             onClick={() => handleRemoveItem(item.id)}
                             disabled={removeItemMutation.isPending}
                             className="text-destructive hover:text-destructive/80"
@@ -338,7 +341,7 @@ export default function CartPage() {
             </CardContent>
           </Card>
         </div>
-        
+
         {/* Order Summary and Checkout */}
         <div>
           <Card className="mb-4">
@@ -362,7 +365,7 @@ export default function CartPage() {
               </div>
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardHeader>
               <CardTitle>Shipping & Payment</CardTitle>
@@ -371,19 +374,19 @@ export default function CartPage() {
               <form onSubmit={handleCheckout} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="address">Shipping Address</Label>
-                  <Input 
-                    id="address" 
+                  <Input
+                    id="address"
                     value={shippingAddress}
                     onChange={(e) => setShippingAddress(e.target.value)}
                     required
                   />
                 </div>
-                
+
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="city">City</Label>
-                    <Input 
-                      id="city" 
+                    <Input
+                      id="city"
                       value={shippingCity}
                       onChange={(e) => setShippingCity(e.target.value)}
                       required
@@ -391,20 +394,20 @@ export default function CartPage() {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="state">State/Province</Label>
-                    <Input 
-                      id="state" 
+                    <Input
+                      id="state"
                       value={shippingState}
                       onChange={(e) => setShippingState(e.target.value)}
                       required
                     />
                   </div>
                 </div>
-                
+
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="zip">ZIP/Postal Code</Label>
-                    <Input 
-                      id="zip" 
+                    <Input
+                      id="zip"
                       value={shippingZip}
                       onChange={(e) => setShippingZip(e.target.value)}
                       required
@@ -412,8 +415,8 @@ export default function CartPage() {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="country">Country</Label>
-                    <Select 
-                      value={shippingCountry} 
+                    <Select
+                      value={shippingCountry}
                       onValueChange={setShippingCountry}
                     >
                       <SelectTrigger id="country">
@@ -432,11 +435,11 @@ export default function CartPage() {
                     </Select>
                   </div>
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="payment">Payment Method</Label>
-                  <Select 
-                    value={paymentMethod} 
+                  <Select
+                    value={paymentMethod}
                     onValueChange={setPaymentMethod}
                   >
                     <SelectTrigger id="payment">
@@ -449,9 +452,9 @@ export default function CartPage() {
                     </SelectContent>
                   </Select>
                 </div>
-                
-                <Button 
-                  type="submit" 
+
+                <Button
+                  type="submit"
                   className="w-full"
                   disabled={checkoutMutation.isPending}
                 >
@@ -471,7 +474,7 @@ export default function CartPage() {
             </CardContent>
             <CardFooter className="text-sm text-neutral-500">
               <p>
-                All gemstones are provided by GemsBiz (<a href="http://www.gemsbiz.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">www.gemsbiz.com</a>), 
+                All gemstones are provided by GemsBiz (<a href="http://www.gemsbiz.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">www.gemsbiz.com</a>),
                 a trusted supplier in the jewelry industry.
               </p>
             </CardFooter>

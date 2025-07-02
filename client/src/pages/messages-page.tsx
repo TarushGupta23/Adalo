@@ -31,11 +31,12 @@ export default function MessagesPage() {
   const selectedContactId = params?.id ? parseInt(params.id) : null;
   
   // Fetch user connections
+  const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:3000";
   const { data: connections, isLoading: isConnectionsLoading } = useQuery<Connection[]>({
     queryKey: ["/api/connections?status=accepted"],
     enabled: !!user,
     queryFn: async () => {
-      const response = await fetch("/api/connections?status=accepted");
+      const response = await fetch(BACKEND_URL+"/api/connections?status=accepted");
       if (!response.ok) throw new Error("Failed to fetch connections");
       return await response.json();
     }
@@ -46,7 +47,7 @@ export default function MessagesPage() {
     queryKey: ["/api/users"],
     enabled: !!connections,
     queryFn: async () => {
-      const response = await fetch("/api/users");
+      const response = await fetch(BACKEND_URL+"/api/users");
       if (!response.ok) throw new Error("Failed to fetch users");
       return await response.json();
     }
@@ -57,7 +58,7 @@ export default function MessagesPage() {
     queryKey: ["/api/messages", selectedContactId],
     enabled: !!selectedContactId,
     queryFn: async () => {
-      const response = await fetch(`/api/messages/${selectedContactId}`);
+      const response = await fetch(`${BACKEND_URL}/api/messages/${selectedContactId}`);
       // Handle empty conversations
       if (response.status === 404) return [];
       if (!response.ok) throw new Error("Failed to fetch messages");

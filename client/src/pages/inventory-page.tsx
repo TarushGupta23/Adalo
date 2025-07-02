@@ -57,13 +57,13 @@ export default function InventoryPage() {
   const [openCreateDialog, setOpenCreateDialog] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-
+  const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:3000";
   // Fetch user's inventory items
   const { data: inventoryItems, isLoading } = useQuery<InventoryItem[]>({
     queryKey: [`/api/users/${user?.id}/inventory`],
     enabled: !!user,
     queryFn: async () => {
-      const response = await fetch(`/api/users/${user?.id}/inventory`);
+      const response = await fetch(`${BACKEND_URL}/api/users/${user?.id}/inventory`);
       if (!response.ok) throw new Error("Failed to fetch inventory items");
       return await response.json();
     }
@@ -73,7 +73,7 @@ export default function InventoryPage() {
   const { data: featuredItems, isLoading: isFeaturedLoading } = useQuery<InventoryItem[]>({
     queryKey: ["/api/inventory?featured=true"],
     queryFn: async () => {
-      const response = await fetch("/api/inventory?featured=true");
+      const response = await fetch(BACKEND_URL+"/api/inventory?featured=true");
       if (!response.ok) throw new Error("Failed to fetch featured items");
       return await response.json();
     }

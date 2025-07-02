@@ -91,11 +91,13 @@ export default function EventsPage() {
   const [activeTab, setActiveTab] = useState("upcoming");
   const [searchQuery, setSearchQuery] = useState("");
   
+  const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:3000";
+
   // Fetch all events
   const { data: events, isLoading: isEventsLoading } = useQuery<Event[]>({
     queryKey: ["/api/events"],
     queryFn: async () => {
-      const response = await fetch("/api/events");
+      const response = await fetch(BACKEND_URL + "/api/events");
       if (!response.ok) throw new Error("Failed to fetch events");
       return await response.json();
     }
@@ -107,7 +109,8 @@ export default function EventsPage() {
     enabled: !!user,
     queryFn: async () => {
       try {
-        const response = await fetch("/api/user/rsvps");
+        const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:3000";
+        const response = await fetch(BACKEND_URL+"/api/user/rsvps");
         if (response.status === 404) return [];
         if (!response.ok) throw new Error("Failed to fetch user RSVPs");
         return await response.json();

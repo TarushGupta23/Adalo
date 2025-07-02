@@ -756,7 +756,9 @@ export default function AdminDashboard() {
                       console.log('Sending simplified event data:', eventData);
 
                       // Use direct database insertion for now since API validation is problematic
-                      fetch('/api/admin/events/create', {
+                      const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:3000"; // Changed: Added BACKEND_URL from process.env
+
+                      fetch(`${BACKEND_URL}/api/admin/events/create`, { // Changed: Prepended BACKEND_URL to the request URL
                         method: 'POST',
                         headers: {
                           'Content-Type': 'application/json',
@@ -874,8 +876,9 @@ export default function AdminDashboard() {
                                 className="w-full text-sm px-3 py-1.5 h-auto whitespace-normal"
                                 onClick={() => {
                                   console.log('Simple delete clicked for event:', event.id);
+                                  const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:3000"; // Changed: Added BACKEND_URL from process.env
                                   // Test direct API call
-                                  fetch(`/api/admin/events/${event.id}`, {
+                                  fetch(`${BACKEND_URL}/api/admin/events/${event.id}`, {
                                     method: 'DELETE',
                                     credentials: 'include'
                                   })
@@ -1027,8 +1030,8 @@ export default function AdminDashboard() {
                                       time,
                                       description
                                     };
-
-                                    const response = await fetch(`/api/admin/events/${event.id}`, {
+                                    const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:3000"; // Changed: Added BACKEND_URL from process.env
+                                    const response = await fetch(`${BACKEND_URL}/api/admin/events/${event.id}`, {
                                       method: 'PATCH',
                                       headers: {
                                         'Content-Type': 'application/json',
@@ -1233,7 +1236,8 @@ export default function AdminDashboard() {
                           });
 
                           try {
-                            const response = await fetch('/api/admin/preview-content', {
+                            const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:3000"; // Changed: Added BACKEND_URL from process.env
+                            const response = await fetch(BACKEND_URL+'/api/admin/preview-content', {
                               method: 'POST',
                               headers: {
                                 'Content-Type': 'application/json',
@@ -1314,7 +1318,8 @@ export default function AdminDashboard() {
                           });
 
                           try {
-                            const response = await fetch('/api/admin/import-article', {
+                            const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:3000"; // Changed: Added BACKEND_URL from process.env
+                            const response = await fetch(`${BACKEND_URL}/api/admin/import-article`, {
                               method: 'POST',
                               headers: {
                                 'Content-Type': 'application/json',

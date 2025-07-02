@@ -16,25 +16,27 @@ export default function TrendingSection() {
   const { user } = useAuth();
   const [, navigate] = useLocation();
   
+  // Add a constant for the backend URL
+  const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:3000"; // Changed: Added BACKEND_URL from process.env
+
   const { data: professionals, isLoading } = useQuery<User[]>({
     queryKey: ["/api/users/featured"],
     queryFn: async () => {
       // Get To Be Packing profile only (ID = 5)
-      const response = await fetch("/api/users/5");
+      const response = await fetch(`${BACKEND_URL}/api/users/5`); // Changed: Prepended BACKEND_URL to the fetch URL
       if (!response.ok) throw new Error("Failed to fetch featured professional");
       const user = await response.json();
       // Return as array with single item
       return [user];
     }
   });
-  
+
   const connectWithProfessional = async (recipientId: number) => {
     try {
       await apiRequest("POST", "/api/connections", {
         recipientId,
         status: "pending"
       });
-      
       toast({
         title: "Connection Request Sent",
         description: "Your connection request has been sent",

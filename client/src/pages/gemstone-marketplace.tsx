@@ -28,7 +28,8 @@ export default function GemstoneMarketplace() {
     queryKey: ["/api/gemstone-categories"],
     queryFn: async () => {
       try {
-        const response = await fetch("/api/gemstone-categories");
+        const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:3000";
+        const response = await fetch(BACKEND_URL+"/api/gemstone-categories");
         if (!response.ok) {
           console.warn("Failed to fetch categories from API, using fallback data");
           // Fallback category data
@@ -204,7 +205,8 @@ export default function GemstoneMarketplace() {
     queryKey: ["/api/suppliers"],
     queryFn: async () => {
       try {
-        const response = await fetch("/api/suppliers");
+        const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:3000";
+        const response = await fetch(BACKEND_URL+"/api/suppliers");
         if (!response.ok) {
           console.warn("Failed to fetch suppliers from API, using fallback data");
           // Fallback supplier data

@@ -58,8 +58,9 @@ export default function DirectoryPage() {
       setProfession(categoryParam);
     }
     
-    // Debug all user types
-    fetch('/api/users')
+    // Add BACKEND_URL constant
+    const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:3000"; // Changed: Added BACKEND_URL from process.env
+    fetch(BACKEND_URL+'/api/users')
       .then(res => res.json())
       .then((users: User[]) => {
         console.log("All users with their types:");
@@ -109,7 +110,9 @@ export default function DirectoryPage() {
       if (location) queryParams.append("location", location);
       
       // Get all users and filter on client side for more flexibility
-      const response = await fetch(`/api/users?${queryParams.toString()}`);
+      // Add BACKEND_URL constant
+      const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:3000"; // Changed: Added BACKEND_URL from process.env
+      const response = await fetch(`${BACKEND_URL}/api/users?${queryParams.toString()}`);
       if (!response.ok) throw new Error("Failed to fetch professionals");
       let results = await response.json() as User[];
       
@@ -360,7 +363,7 @@ export default function DirectoryPage() {
               ))
             )}
             
-            {!isLoading && (searchQuery || profession || location) && professionals?.length > 0 && professionals
+            {(!isLoading && (searchQuery || profession || location) && professionals && professionals?.length > 0) && professionals
               // Don't further filter the results, as the backend filtering is already applied
               .map((professional) => (
                 <Card key={professional.id} className="overflow-hidden transition-all hover:shadow-lg">

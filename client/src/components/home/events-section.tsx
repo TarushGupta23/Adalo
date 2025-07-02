@@ -8,13 +8,16 @@ import { MapPin, Clock, CalendarPlus } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
+// Add a constant for the backend URL
+const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:3000"; // Changed: Added BACKEND_URL from process.env
+
 export default function EventsSection() {
   const { toast } = useToast();
   
   const { data: events, isLoading } = useQuery<Event[]>({
     queryKey: ["/api/events?limit=3"],
     queryFn: async () => {
-      const response = await fetch("/api/events?limit=3");
+      const response = await fetch(`${BACKEND_URL}/api/events?limit=3`); // Changed: Prepended BACKEND_URL to the request URL
       if (!response.ok) throw new Error("Failed to fetch events");
       return await response.json();
     }
